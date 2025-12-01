@@ -10,18 +10,6 @@ use secrecy::{ExposeSecret, SecretString};
 use std::sync::Arc;
 use uuid::Uuid;
 
-impl From<User> for domain::User {
-    fn from(user: User) -> Self {
-        Self {
-            id: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            password_hash: user.password_hash.into(),
-        }
-    }
-}
-
 pub struct PostgresUserRepo {
     pool: Arc<db::Pool>,
 }

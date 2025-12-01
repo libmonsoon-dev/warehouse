@@ -1,3 +1,4 @@
+use crate::domain;
 use diesel::{Insertable, Queryable, Selectable};
 use uuid::Uuid;
 
@@ -10,4 +11,16 @@ pub struct User {
     pub last_name: String,
     pub email: String,
     pub password_hash: String,
+}
+
+impl From<User> for domain::User {
+    fn from(user: User) -> Self {
+        Self {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            password_hash: user.password_hash.into(),
+        }
+    }
 }
