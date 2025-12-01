@@ -1,8 +1,11 @@
 pub mod config;
+pub mod contract;
 pub mod db;
 pub mod dependency;
 pub mod domain;
-pub mod routes;
-pub mod schema;
+pub mod dto;
+pub mod repository;
+pub mod rest;
 pub mod server;
+pub mod service;
 pub mod telemetry;

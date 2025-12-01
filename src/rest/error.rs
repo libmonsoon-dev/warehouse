@@ -1,24 +1,11 @@
-use crate::routes::auth::AuthError;
+use crate::{contract::repository::error::RepositoryError, service::auth::AuthError};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use validator::ValidationError;
 
-//TODO: move
-#[derive(thiserror::Error, Debug)]
-pub enum RepositoryError {
-    #[error("Entity already exists")]
-    Exists(#[source] anyhow::Error),
+pub struct Error(anyhow::Error);
 
-    #[error("Entity not found")]
-    NotFound,
-
-    #[error(transparent)]
-    UnexpectedError(#[from] anyhow::Error),
-}
-
-pub struct HttpError(anyhow::Error);
-
-impl IntoResponse for HttpError {
+impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         tracing::error!("{:?}", self.0);
 
@@ -49,7 +36,7 @@ impl IntoResponse for HttpError {
     }
 }
 
-impl<E> From<E> for HttpError
+impl<E> From<E> for Error
 where
     E: Into<anyhow::Error>,
 {

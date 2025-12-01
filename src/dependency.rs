@@ -1,8 +1,6 @@
 use crate::{
-    config::Config,
-    db,
-    routes::auth::AuthService,
-    routes::user_repository::{PostgresUserRepo, UserRepository},
+    config::Config, contract::repository::user::UserRepository, db,
+    repository::postgresql::user::PostgresUserRepo, service::auth::AuthService,
 };
 use despatma::dependency_container;
 use std::sync::Arc;

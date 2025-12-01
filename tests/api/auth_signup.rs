@@ -5,7 +5,8 @@ use fake::Fake;
 use pretty_assertions::assert_eq;
 use secrecy::ExposeSecret;
 use uuid::Uuid;
-use warehouse::routes::auth::{AccessTokenClaims, AuthTokens};
+use warehouse::domain::AuthTokens;
+use warehouse::service::auth::AccessTokenClaims;
 
 #[tokio::test]
 async fn signup_works() {

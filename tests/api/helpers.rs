@@ -12,8 +12,7 @@ use uuid::Uuid;
 use warehouse::{
     config::{DatabaseConfig, get_configuration},
     dependency::AppContainer,
-    routes::auth::SignUpData,
-    server,
+    domain, server,
     telemetry::{get_subscriber, init_subscriber},
 };
 
@@ -29,13 +28,13 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
     };
 });
 
-pub struct TestApp {
+pub struct TestApp<'a> {
     pub address: String,
-    pub admin: SignUpData,
-    pub dependency: AppContainer<'static>,
+    pub admin: domain::SignUpData,
+    pub dependency: AppContainer<'a>,
 }
 
-impl TestApp {
+impl<'a> TestApp<'a> {
     pub async fn sign_up(&self, body: String) -> Result<Response, Error> {
         reqwest::Client::new()
             .post(&format!("{}/api/v1/auth/sign-up", &self.address))
@@ -53,7 +52,7 @@ impl TestApp {
     }
 }
 
-pub async fn spawn_app() -> TestApp {
+pub async fn spawn_app<'a>() -> TestApp<'a> {
     // The first time `initialize` is invoked the code in `TRACING` is executed.
     // All other invocations will instead skip execution.
     LazyLock::force(&TRACING);
@@ -70,7 +69,7 @@ pub async fn spawn_app() -> TestApp {
     configure_database(&configuration.database).await;
     let dependency = AppContainer::new(configuration);
 
-    let admin = SignUpData {
+    let admin = domain::SignUpData {
         first_name: "admin".to_string(),
         last_name: "admin".to_string(),
         email: "admin@warehouse.com".to_string(),

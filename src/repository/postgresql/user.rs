@@ -1,38 +1,14 @@
-use crate::routes::error::RepositoryError;
-use crate::schema::users;
-use crate::{db, domain};
+use crate::contract::repository::error::RepositoryError;
+use crate::{
+    contract::repository::Repository, contract::repository::user::UserRepository, db, domain,
+    repository::postgresql::models::User, repository::postgresql::schema::users,
+};
 use anyhow::{Context, Result, anyhow};
-use diesel::prelude::*;
-use diesel::result::DatabaseErrorKind;
+use diesel::{prelude::*, result::DatabaseErrorKind};
 use diesel_async::RunQueryDsl;
 use secrecy::{ExposeSecret, SecretString};
 use std::sync::Arc;
 use uuid::Uuid;
-
-#[async_trait::async_trait]
-pub trait Repository<T>: Send + Sync {
-    async fn create(&self, val: &mut T) -> Result<()>;
-
-    async fn get_by_id(&self, id: Uuid) -> Result<T>;
-}
-
-#[async_trait::async_trait]
-pub trait UserRepository: Repository<domain::User> {
-    async fn get_by_email(&self, email: &str) -> Result<domain::User>;
-    async fn update_password_hash(&self, user_id: Uuid, password_hash: &SecretString)
-    -> Result<()>;
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::users)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-struct User {
-    pub id: Uuid,
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-    pub password_hash: String,
-}
 
 impl From<User> for domain::User {
     fn from(user: User) -> Self {

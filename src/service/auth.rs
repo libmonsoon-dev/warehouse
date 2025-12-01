@@ -1,110 +1,19 @@
+use crate::contract::repository::error::RepositoryError;
+use crate::contract::repository::user::UserRepository;
 use crate::{
-    dependency::AppContainer,
-    domain,
-    routes::error::{HttpError, RepositoryError},
-    routes::user_repository::UserRepository,
-    telemetry::spawn_blocking_with_tracing,
+    domain::auth::AuthTokens, domain::auth::SignUpData, domain::user::User,
+    dto::auth::SignInRequest, telemetry::spawn_blocking_with_tracing,
 };
 use anyhow::{Context, Result};
 use argon2::{
     Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version,
     password_hash::SaltString, password_hash::rand_core::OsRng,
 };
-use axum::{Json, extract::State, http::StatusCode};
 use chrono::{Duration, Utc};
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
-use validator::Validate;
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AuthTokens {
-    pub access_token: String,
-    //TODO: refresh_token
-}
-
-#[axum::debug_handler]
-#[tracing::instrument(skip(state, req))]
-pub async fn sign_up(
-    State(state): State<AppContainer<'static>>,
-    Json(req): Json<SignUpRequest>,
-) -> Result<(StatusCode, Json<AuthTokens>), HttpError> {
-    req.validate()?;
-
-    let tokens = state.auth_service().await.sign_up(req.into()).await?;
-    Ok((StatusCode::CREATED, Json(tokens)))
-}
-
-#[tracing::instrument(skip(state, req))]
-pub async fn sign_in(
-    State(state): State<AppContainer<'static>>,
-    Json(req): Json<SignInRequest>,
-) -> Result<(StatusCode, Json<AuthTokens>), HttpError> {
-    req.validate()?;
-
-    let tokens = state.auth_service().await.sign_in(req).await?;
-
-    Ok((StatusCode::OK, Json(tokens)))
-}
-
-#[derive(Deserialize, Validate)]
-pub struct SignInRequest {
-    #[validate(email, length(min = 3, max = 256))]
-    pub email: String,
-
-    #[validate(length(min = 8, max = 64))]
-    pub password: String,
-}
-
-#[derive(Deserialize, Validate)]
-pub struct SignUpRequest {
-    #[validate(length(min = 3, max = 256))]
-    pub first_name: String,
-
-    #[validate(length(min = 3, max = 256))]
-    pub last_name: String,
-
-    #[validate(email, length(min = 3, max = 256))]
-    pub email: String,
-
-    #[validate(length(min = 8, max = 64))]
-    pub password: String,
-}
-
-impl Into<SignUpData> for SignUpRequest {
-    fn into(self) -> SignUpData {
-        let Self {
-            first_name,
-            last_name,
-            email,
-            password,
-        } = self;
-
-        SignUpData {
-            first_name,
-            last_name,
-            email,
-            password: SecretString::from(password),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct SignUpData {
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-    pub password: SecretString,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AccessTokenClaims {
-    pub exp: usize,
-    pub iat: usize,
-    pub id: Uuid,
-    pub email: String,
-}
 
 #[derive(thiserror::Error, Debug)]
 pub enum AuthError {
@@ -130,7 +39,7 @@ impl AuthService {
 
     #[tracing::instrument(skip(self, args))]
     pub async fn sign_up(&self, args: SignUpData) -> Result<AuthTokens> {
-        let mut user = domain::User {
+        let mut user = User {
             id: Uuid::new_v4(),
             first_name: args.first_name,
             last_name: args.last_name,
@@ -152,7 +61,7 @@ impl AuthService {
     }
 
     #[tracing::instrument(skip(self, _args))]
-    async fn sign_in(&self, _args: SignInRequest) -> Result<AuthTokens> {
+    pub async fn sign_in(&self, _args: SignInRequest) -> Result<AuthTokens> {
         todo!()
     }
 
@@ -208,7 +117,7 @@ impl AuthService {
     }
 
     #[tracing::instrument(skip(self, user), fields(id = %user.id))]
-    pub fn encode_access_jwt(&self, user: &domain::User) -> Result<String> {
+    pub fn encode_access_jwt(&self, user: &User) -> Result<String> {
         let now = Utc::now();
         let expire = Duration::hours(24);
         let exp: usize = (now + expire).timestamp() as usize;
@@ -275,4 +184,12 @@ fn new_argon() -> Argon2<'static> {
         Version::V0x13,
         Params::new(15000, 2, 1, None).unwrap(),
     )
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AccessTokenClaims {
+    pub exp: usize,
+    pub iat: usize,
+    pub id: Uuid,
+    pub email: String,
 }

@@ -1,22 +1,12 @@
-use crate::{
-    dependency::AppContainer,
-    routes::{auth, health_check},
-};
-use axum::{
-    Router,
-    http::StatusCode,
-    routing::{get, post},
-};
+use crate::{dependency::AppContainer, rest};
+use axum::{Router, http::StatusCode};
 use std::time::Duration;
 use tokio::{net::TcpListener, signal};
 use tower_http::timeout::TimeoutLayer;
 use trace_id::TraceIdLayer;
 
 pub async fn run(state: AppContainer<'static>, listener: TcpListener) {
-    let v1 = Router::new()
-        .route("/health-check", get(health_check::health_check))
-        .route("/auth/sign-up", post(auth::sign_up))
-        .route("/auth/sign-in", post(auth::sign_in));
+    let v1 = rest::new_handler();
 
     let router = Router::new()
         .nest("/api/v1", v1)
