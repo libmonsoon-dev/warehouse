@@ -9,11 +9,13 @@ use secrecy::{ExposeSecret, SecretString};
 use std::sync::LazyLock;
 use tokio::net::TcpListener;
 use uuid::Uuid;
-use warehouse::config::{DatabaseConfig, get_configuration};
-use warehouse::routes::auth::SignUpData;
-use warehouse::server;
-use warehouse::server::AppContainer;
-use warehouse::telemetry::{get_subscriber, init_subscriber};
+use warehouse::{
+    config::{DatabaseConfig, get_configuration},
+    dependency::AppContainer,
+    routes::auth::SignUpData,
+    server,
+    telemetry::{get_subscriber, init_subscriber},
+};
 
 static TRACING: LazyLock<()> = LazyLock::new(|| {
     let default_filter_level = "info".to_string();

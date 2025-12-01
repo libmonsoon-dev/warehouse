@@ -1,10 +1,14 @@
-pub use crate::dependency::AppContainer;
-use crate::routes::{auth, health_check};
-use axum::Router;
-use axum::routing::{get, post};
+use crate::{
+    dependency::AppContainer,
+    routes::{auth, health_check},
+};
+use axum::{
+    Router,
+    http::StatusCode,
+    routing::{get, post},
+};
 use std::time::Duration;
-use tokio::net::TcpListener;
-use tokio::signal;
+use tokio::{net::TcpListener, signal};
 use tower_http::timeout::TimeoutLayer;
 use trace_id::TraceIdLayer;
 
@@ -18,7 +22,10 @@ pub async fn run(state: AppContainer<'static>, listener: TcpListener) {
         .nest("/api/v1", v1)
         .with_state(state)
         .layer(TraceIdLayer::new())
-        .layer(TimeoutLayer::new(Duration::from_secs(10)));
+        .layer(TimeoutLayer::with_status_code(
+            StatusCode::REQUEST_TIMEOUT,
+            Duration::from_secs(10),
+        ));
 
     axum::serve(listener, router)
         .with_graceful_shutdown(shutdown_signal())

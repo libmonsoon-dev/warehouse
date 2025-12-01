@@ -1,12 +1,16 @@
-use crate::config::Config;
-use crate::db;
-use crate::routes::auth::AuthService;
-use crate::routes::user_repository::{PostgresUserRepo, UserRepository};
+use crate::{
+    config::Config,
+    db,
+    routes::auth::AuthService,
+    routes::user_repository::{PostgresUserRepo, UserRepository},
+};
 use despatma::dependency_container;
 use std::sync::Arc;
 
-#[dependency_container(embedded = "config")]
+#[dependency_container(pub)]
 impl AppContainer {
+    fn new(config: Config) {}
+
     #[Singleton]
     async fn db_pool(&self, config: &Config) -> Arc<db::Pool> {
         Arc::new(db::connect(&config.database).await)

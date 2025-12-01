@@ -31,7 +31,7 @@ tower-http = { version = "0.6.6", features = ["timeout"] }
 thiserror = "2.0.17"
 anyhow = "1.0.100"
 rand = "0.9.2"
-despatma = { git = "https://github.com/libmonsoon-dev/despatma" }
+despatma = { git = "https://github.com/libmonsoon-dev/despatma", branch = "embedded-dependency" }
 
 [dev-dependencies]
 reqwest = { version = "0.12", features = ["json"] }
