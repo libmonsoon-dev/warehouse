@@ -1,3 +1,5 @@
 .idea
-server/target
+target
 
+.env
+migrations/.diesel_lock
