@@ -15,12 +15,20 @@ pub struct User {
 
 impl From<User> for domain::User {
     fn from(user: User) -> Self {
+        let User {
+            id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+        } = user;
+
         Self {
-            id: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            password_hash: user.password_hash.into(),
+            id,
+            first_name,
+            last_name,
+            email,
+            password_hash: password_hash.into(),
         }
     }
 }

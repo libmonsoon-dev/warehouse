@@ -81,8 +81,20 @@ impl Repository<domain::User> for PostgresUserRepo {
 #[async_trait::async_trait]
 impl UserRepository for PostgresUserRepo {
     #[tracing::instrument(skip(self))]
-    async fn get_by_email(&self, _email: &str) -> Result<domain::User> {
-        todo!()
+    async fn get_by_email(&self, email: &str) -> Result<domain::User> {
+        let mut conn = self.pool.get().await.context("DB connection failure")?;
+
+        let model = users::table
+            .select(User::as_select())
+            .filter(users::email.eq(email))
+            .first(&mut conn)
+            .await
+            .optional()?;
+
+        match model {
+            Some(model) => Ok(model.into()),
+            None => Err(RepositoryError::NotFound.into()),
+        }
     }
 
     #[tracing::instrument(skip(self, _password_hash))]

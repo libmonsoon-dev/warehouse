@@ -1,3 +1,4 @@
+use crate::domain::SignInData;
 use crate::domain::auth::SignUpData;
 use secrecy::SecretString;
 use serde::Deserialize;
@@ -10,6 +11,17 @@ pub struct SignInRequest {
 
     #[validate(length(min = 8, max = 64))]
     pub password: String,
+}
+
+impl Into<SignInData> for SignInRequest {
+    fn into(self) -> SignInData {
+        let Self { email, password } = self;
+
+        SignInData {
+            email,
+            password: SecretString::from(password),
+        }
+    }
 }
 
 #[derive(Deserialize, Validate)]

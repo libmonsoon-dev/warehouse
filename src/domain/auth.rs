@@ -9,6 +9,11 @@ pub struct SignUpData {
     pub password: SecretString,
 }
 
+pub struct SignInData {
+    pub email: String,
+    pub password: SecretString,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthTokens {
     pub access_token: String,

@@ -44,6 +44,15 @@ impl<'a> TestApp<'a> {
             .await
     }
 
+    pub async fn sign_in(&self, body: String) -> Result<Response, Error> {
+        reqwest::Client::new()
+            .post(&format!("{}/api/v1/auth/sign-in", &self.address))
+            .header(CONTENT_TYPE, "application/json")
+            .body(body)
+            .send()
+            .await
+    }
+
     pub async fn health_check(self) -> Result<Response, Error> {
         reqwest::Client::new()
             .get(&format!("{}/api/v1/health-check", &self.address))

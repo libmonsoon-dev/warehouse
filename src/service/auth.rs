@@ -1,9 +1,7 @@
 use crate::contract::repository::error::RepositoryError;
 use crate::contract::repository::user::UserRepository;
-use crate::{
-    domain::auth::AuthTokens, domain::auth::SignUpData, domain::user::User,
-    dto::auth::SignInRequest, telemetry::spawn_blocking_with_tracing,
-};
+use crate::domain::{AuthTokens, SignInData, SignUpData, User};
+use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::{Context, Result};
 use argon2::{
     Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version,
@@ -60,14 +58,17 @@ impl AuthService {
         Ok(AuthTokens { access_token })
     }
 
-    #[tracing::instrument(skip(self, _args))]
-    pub async fn sign_in(&self, _args: SignInRequest) -> Result<AuthTokens> {
-        todo!()
+    #[tracing::instrument(skip(self, args))]
+    pub async fn sign_in(&self, args: SignInData) -> Result<AuthTokens> {
+        let user = self.validate_credentials(args).await?;
+
+        let access_token = self.encode_access_jwt(&user)?;
+        Ok(AuthTokens { access_token })
     }
 
     #[tracing::instrument(skip(self, credentials))]
-    async fn _validate_credentials(&self, credentials: SignInRequest) -> Result<Uuid, AuthError> {
-        let mut user_id = None;
+    async fn validate_credentials(&self, credentials: SignInData) -> Result<User, AuthError> {
+        let mut user = None;
         let mut expected_password_hash = SecretString::from(
             "$argon2id$v=19$m=15000,t=2,p=1$\
         gZiV/M1gPc22ElAH/Jh1Hw$\
@@ -75,9 +76,9 @@ impl AuthService {
         );
 
         match self.user_repository.get_by_email(&credentials.email).await {
-            Ok(user) => {
-                user_id = Some(user.id);
-                expected_password_hash = user.password_hash;
+            Ok(u) => {
+                expected_password_hash = u.password_hash.clone();
+                user = Some(u);
             }
             Err(err) => 'errors: {
                 for cause in err.chain() {
@@ -98,8 +99,7 @@ impl AuthService {
         .await
         .context("Failed to spawn blocking task.")??;
 
-        user_id
-            .ok_or_else(|| anyhow::anyhow!("Unknown username."))
+        user.ok_or_else(|| anyhow::anyhow!("Unknown email."))
             .map_err(AuthError::InvalidCredentials)
     }
 
@@ -155,15 +155,14 @@ impl AuthService {
 #[tracing::instrument(skip(expected_password_hash, password_candidate))]
 fn verify_password_hash(
     expected_password_hash: SecretString,
-    password_candidate: String, //TODO: SecretString,
+    password_candidate: SecretString,
 ) -> Result<(), AuthError> {
     let expected_password_hash = PasswordHash::new(expected_password_hash.expose_secret())
         .context("Failed to parse hash in PHC string format.")?;
 
     new_argon()
         .verify_password(
-            password_candidate //TODO:.expose_secret()
-                .as_bytes(),
+            password_candidate.expose_secret().as_bytes(),
             &expected_password_hash,
         )
         .context("Invalid password.")

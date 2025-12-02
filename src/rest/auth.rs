@@ -25,7 +25,6 @@ pub async fn sign_in(
 ) -> Result<(StatusCode, Json<AuthTokens>), Error> {
     req.validate()?;
 
-    let tokens = state.auth_service().await.sign_in(req).await?;
-
+    let tokens = state.auth_service().await.sign_in(req.into()).await?;
     Ok((StatusCode::OK, Json(tokens)))
 }
