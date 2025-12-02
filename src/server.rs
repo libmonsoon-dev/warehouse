@@ -6,10 +6,8 @@ use tower_http::timeout::TimeoutLayer;
 use trace_id::TraceIdLayer;
 
 pub async fn run(state: AppContainer<'static>, listener: TcpListener) {
-    let v1 = rest::new_handler();
-
     let router = Router::new()
-        .nest("/api/v1", v1)
+        .nest("/api/v1", rest::v1_handler())
         .with_state(state)
         .layer(TraceIdLayer::new())
         .layer(TimeoutLayer::with_status_code(

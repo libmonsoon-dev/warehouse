@@ -6,7 +6,7 @@ pub mod auth;
 pub mod error;
 pub mod health_check;
 
-pub fn new_handler() -> Router<AppContainer<'static>> {
+pub fn v1_handler() -> Router<AppContainer<'static>> {
     Router::new()
         .route("/health-check", get(health_check::health_check))
         .route("/auth/sign-up", post(auth::sign_up))
