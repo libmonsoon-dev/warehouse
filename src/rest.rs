@@ -2,9 +2,9 @@ use crate::dependency::AppContainer;
 use axum::Router;
 use axum::routing::{get, post};
 
-pub mod auth;
-pub mod error;
-pub mod health_check;
+mod auth;
+mod error;
+mod health_check;
 
 pub fn v1_handler() -> Router<AppContainer<'static>> {
     Router::new()
