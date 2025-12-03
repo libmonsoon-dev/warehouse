@@ -13,6 +13,7 @@ lint:
 
 fmt:
 	cargo fmt -- --check
+	leptosfmt --check ./**/*.rs
 
 dep:
 	cargo deny check
