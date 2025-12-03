@@ -1,14 +1,46 @@
+use crate::state::AppState;
+use crate::web::app::{App, shell};
 use crate::{dependency::AppContainer, rest};
 use axum::{Router, http::StatusCode};
+use leptos::prelude::*;
+use leptos_axum::{LeptosRoutes, file_and_error_handler_with_context, generate_route_list};
 use std::time::Duration;
 use tokio::{net::TcpListener, signal};
 use tower_http::timeout::TimeoutLayer;
 use trace_id::TraceIdLayer;
 
-pub async fn run(state: AppContainer<'static>, listener: TcpListener) {
+pub async fn run(dependencies: AppContainer<'static>, listener: TcpListener) {
+    let conf = get_configuration(None).unwrap();
+    let leptos_options = conf.leptos_options;
+    let routes = generate_route_list(App);
+
+    let app_state = AppState {
+        dependencies,
+        leptos_options,
+    };
+
     let router = Router::new()
+        .leptos_routes_with_context(
+            &app_state,
+            routes,
+            {
+                let app_state = app_state.clone();
+                move || provide_context(app_state.clone())
+            },
+            {
+                let app_state = app_state.clone();
+                move || shell(app_state.leptos_options.clone())
+            },
+        )
         .nest("/api/v1", rest::v1_handler())
-        .with_state(state)
+        .fallback(file_and_error_handler_with_context::<AppState, _>(
+            {
+                let app_state = app_state.clone();
+                move || provide_context(app_state.clone())
+            },
+            shell,
+        ))
+        .with_state(app_state)
         .layer(TraceIdLayer::new())
         .layer(TimeoutLayer::with_status_code(
             StatusCode::REQUEST_TIMEOUT,

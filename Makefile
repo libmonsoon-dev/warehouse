@@ -1,5 +1,12 @@
 dev:
-	cargo watch --exec check --exec test --exec run --clear
+	cargo watch \
+		--exec "check --features=ssr" \
+		--exec "check --features=hydrate" \
+		--exec "test --features=ssr" \
+		--clear
+
+dev-server:
+	cargo leptos watch
 
 lint:
 	cargo clippy -- -D warnings
