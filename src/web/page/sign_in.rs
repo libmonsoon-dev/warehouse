@@ -27,7 +27,7 @@ pub fn SignIn() -> impl IntoView {
     let sign_in_action = Action::new(move |input: &SignInRequest| {
         let input = input.to_owned();
         async move {
-            let tokens = sign_in(input).await.unwrap();
+            let tokens = sign_in(input).await.unwrap(); //TODO: remove unwrap
             set_tokens.set(Some(tokens));
         }
     });
@@ -43,7 +43,7 @@ pub fn SignIn() -> impl IntoView {
 
             <button type="submit">Sign up</button>
         </form>
-        <p>{move || sign_in_action.pending().get().then_some("Signing in...")}</p>
+        {move || sign_in_action.pending().get().then_some(view! {<p>"Signing in..."</p>})}
     }
 }
 
