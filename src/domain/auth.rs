@@ -14,7 +14,7 @@ pub struct SignInData {
     pub password: SecretString,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct AuthTokens {
     pub access_token: String,
     //TODO: refresh_token

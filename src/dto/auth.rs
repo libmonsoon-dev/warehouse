@@ -1,10 +1,10 @@
 use crate::domain::SignInData;
 use crate::domain::auth::SignUpData;
 use secrecy::SecretString;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-#[derive(Deserialize, Validate)]
+#[derive(Serialize, Deserialize, Validate, Clone, Debug)]
 pub struct SignInRequest {
     #[validate(email, length(min = 3, max = 256))]
     pub email: String,
@@ -24,7 +24,7 @@ impl Into<SignInData> for SignInRequest {
     }
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Serialize, Deserialize, Clone, Debug, Validate)]
 pub struct SignUpRequest {
     #[validate(length(min = 3, max = 256))]
     pub first_name: String,
