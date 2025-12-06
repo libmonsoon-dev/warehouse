@@ -40,17 +40,36 @@ pub fn SignUp() -> impl IntoView {
     view! {
         <form on:submit=move |ev| {
             ev.prevent_default();
-
             sign_up_action.dispatch(req());
         }>
-            <input type="text"  placeholder="First Name" on:input:target=move |ev| set_first_name.set(ev.target().value()) prop:value=first_name />
-            <input type="text"  placeholder="Second Name" on:input:target=move |ev| set_last_name.set(ev.target().value()) prop:value=last_name/>
-            <input type="email"  placeholder="Email Address" on:input:target=move |ev| set_email.set(ev.target().value()) prop:value=email/>
-            <input type="password"  placeholder="Password" on:input:target=move |ev| set_password.set(ev.target().value()) prop:value=password/>
+            <input
+                type="text"
+                placeholder="First Name"
+                on:input:target=move |ev| set_first_name.set(ev.target().value())
+                prop:value=first_name
+            />
+            <input
+                type="text"
+                placeholder="Second Name"
+                on:input:target=move |ev| set_last_name.set(ev.target().value())
+                prop:value=last_name
+            />
+            <input
+                type="email"
+                placeholder="Email Address"
+                on:input:target=move |ev| set_email.set(ev.target().value())
+                prop:value=email
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                on:input:target=move |ev| set_password.set(ev.target().value())
+                prop:value=password
+            />
 
             <button type="submit">Sign up</button>
         </form>
-        {move || sign_up_action.pending().get().then_some(view! {<p>"Signing in..."</p>})}
+        {move || sign_up_action.pending().get().then_some(view! { <p>"Signing in..."</p> })}
         <p>"Already have an account? "<A href="/sign-in">Sign in</A></p>
     }
 }

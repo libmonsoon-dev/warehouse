@@ -36,15 +36,24 @@ pub fn SignIn() -> impl IntoView {
     view! {
         <form on:submit=move |ev| {
             ev.prevent_default();
-
             sign_in_action.dispatch(req());
         }>
-            <input type="email"  placeholder="Email Address" on:input:target=move |ev| set_email.set(ev.target().value()) prop:value=email/>
-            <input type="password"  placeholder="Password" on:input:target=move |ev| set_password.set(ev.target().value()) prop:value=password/>
+            <input
+                type="email"
+                placeholder="Email Address"
+                on:input:target=move |ev| set_email.set(ev.target().value())
+                prop:value=email
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                on:input:target=move |ev| set_password.set(ev.target().value())
+                prop:value=password
+            />
 
             <button type="submit">Sign up</button>
         </form>
-        {move || sign_in_action.pending().get().then_some(view! {<p>"Signing in..."</p>})}
+        {move || sign_in_action.pending().get().then_some(view! { <p>"Signing in..."</p> })}
         <p>"Don't have an account yet? "<A href="/sign-up">"Sign up"</A></p>
     }
 }
