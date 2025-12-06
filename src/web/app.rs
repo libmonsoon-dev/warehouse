@@ -1,4 +1,4 @@
-use crate::web::component::LogOut;
+use crate::web::component::{SideBar, TopBar};
 use crate::web::page::{HomePage, SignIn, SignUp};
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
@@ -34,16 +34,17 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/warehouse.css" />
         <Title text="Warehouse" />
         <Router>
-            <header class="topbar">
-                <LogOut/>
-            </header>
-            <main>
+            <TopBar/>
+            <div class="container">
+            <SideBar/>
+            <main class="main-content">
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=StaticSegment("") view=HomePage />
                     <Route path=StaticSegment("/sign-in") view=SignIn />
                     <Route path=StaticSegment("/sign-up") view=SignUp />
                 </Routes>
             </main>
+            </div>
         </Router>
     }
 }
