@@ -6,8 +6,11 @@ dev:
 		--clear
 
 dev-server:
-	killall warehouse --wait || true
-	cargo leptos watch
+	while true; do \
+		killall warehouse --wait || true; \
+		cargo leptos watch; \
+	done; \
+	true
 
 lint:
 	cargo clippy -- -D warnings
