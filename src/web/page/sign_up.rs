@@ -3,6 +3,7 @@ use crate::dto::auth::SignUpRequest;
 use crate::web::component::use_auth_tokens;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
+use leptos_router::components::A;
 use validator::Validate;
 
 #[component]
@@ -50,6 +51,7 @@ pub fn SignUp() -> impl IntoView {
             <button type="submit">Sign up</button>
         </form>
         {move || sign_up_action.pending().get().then_some(view! {<p>"Signing in..."</p>})}
+        <p>"Already have an account? "<A href="/sign-in">Sign in</A></p>
     }
 }
 
