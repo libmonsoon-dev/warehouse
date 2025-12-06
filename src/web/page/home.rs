@@ -1,4 +1,4 @@
-use crate::web::component::auth::Authorized;
+use crate::web::component::Authorized;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 

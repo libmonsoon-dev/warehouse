@@ -1,6 +1,6 @@
 use crate::domain::AuthTokens;
 use crate::dto::auth::SignInRequest;
-use crate::web::component::auth::use_auth_tokens;
+use crate::web::component::use_auth_tokens;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 use validator::Validate;

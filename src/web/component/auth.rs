@@ -3,7 +3,7 @@ use codee::string::JsonSerdeCodec;
 use leptos::component;
 use leptos::prelude::*;
 use leptos::{IntoView, view};
-use leptos_use::storage::use_local_storage;
+use leptos_use::storage::{UseStorageOptions, use_local_storage, use_local_storage_with_options};
 
 #[component]
 pub fn Authorized(children: Children) -> impl IntoView {
@@ -19,10 +19,34 @@ pub fn Authorized(children: Children) -> impl IntoView {
     view! { {children()} }
 }
 
+#[component]
+pub fn LogOut() -> impl IntoView {
+    let (tokens, set_tokens, _) = use_delayed_auth_tokens();
+
+    move || {
+        tokens.get().map(|_| {
+            view! {<button on:click=move |_| {set_tokens.set(None)}>Logout</button>}
+        })
+    }
+}
+
 pub fn use_auth_tokens() -> (
     Signal<Option<AuthTokens>>,
     WriteSignal<Option<AuthTokens>>,
     impl Fn() + Clone + Send + Sync,
 ) {
-    use_local_storage::<Option<AuthTokens>, JsonSerdeCodec>("authTokens")
+    use_local_storage::<Option<AuthTokens>, JsonSerdeCodec>(AUTH_TOKENS_LOCAL_STORAGE_KEY)
 }
+
+pub fn use_delayed_auth_tokens() -> (
+    Signal<Option<AuthTokens>>,
+    WriteSignal<Option<AuthTokens>>,
+    impl Fn() + Clone + Send + Sync,
+) {
+    use_local_storage_with_options::<Option<AuthTokens>, JsonSerdeCodec>(
+        AUTH_TOKENS_LOCAL_STORAGE_KEY,
+        UseStorageOptions::default().delay_during_hydration(true),
+    )
+}
+
+const AUTH_TOKENS_LOCAL_STORAGE_KEY: &str = "authTokens";
