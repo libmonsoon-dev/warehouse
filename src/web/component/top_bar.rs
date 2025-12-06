@@ -1,4 +1,4 @@
-use crate::web::component::LogOut;
+use crate::web::component::LogOutButton;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 
@@ -6,7 +6,7 @@ use leptos::{IntoView, component, view};
 pub fn TopBar() -> impl IntoView {
     view! {
         <header class="top-bar">
-            <LogOut />
+            <LogOutButton />
         </header>
     }
 }

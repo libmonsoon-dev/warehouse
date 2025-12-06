@@ -20,7 +20,7 @@ pub fn Authorized(children: Children) -> impl IntoView {
 }
 
 #[component]
-pub fn LogOut() -> impl IntoView {
+pub fn LogOutButton() -> impl IntoView {
     let (tokens, set_tokens, _) = use_delayed_auth_tokens();
 
     move || {
