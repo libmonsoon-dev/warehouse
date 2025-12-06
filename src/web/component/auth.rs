@@ -16,7 +16,7 @@ pub fn Authorized(children: Children) -> impl IntoView {
         }
     });
 
-    view! { {children()} }
+    children()
 }
 
 #[component]
