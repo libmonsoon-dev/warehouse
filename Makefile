@@ -6,6 +6,7 @@ dev:
 		--clear
 
 dev-server:
+	killall warehouse --wait || true
 	cargo leptos watch
 
 lint:
