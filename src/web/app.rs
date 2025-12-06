@@ -34,16 +34,16 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/warehouse.css" />
         <Title text="Warehouse" />
         <Router>
-            <TopBar/>
+            <TopBar />
             <div class="container">
-            <SideBar/>
-            <main class="main-content">
-                <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage />
-                    <Route path=StaticSegment("/sign-in") view=SignIn />
-                    <Route path=StaticSegment("/sign-up") view=SignUp />
-                </Routes>
-            </main>
+                <SideBar />
+                <main class="main-content">
+                    <Routes fallback=|| "Page not found.".into_view()>
+                        <Route path=StaticSegment("") view=HomePage />
+                        <Route path=StaticSegment("/sign-in") view=SignIn />
+                        <Route path=StaticSegment("/sign-up") view=SignUp />
+                    </Routes>
+                </main>
             </div>
         </Router>
     }
