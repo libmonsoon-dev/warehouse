@@ -8,7 +8,7 @@ dev:
 dev-server:
 	while true; do \
 		killall warehouse --wait || true; \
-		cargo leptos watch; \
+		cargo leptos watch | bunyan; \
 	done; \
 	true
 
