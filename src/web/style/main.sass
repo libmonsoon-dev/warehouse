@@ -1,0 +1,184 @@
+body
+  font-family: sans-serif
+
+*, *::before, *::after
+  box-sizing: border-box
+
+[aria-current]:not([aria-current="false"])
+  font-weight: bold
+
+.top-bar
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  height: 60px
+  background: white
+  display: flex
+  align-items: center
+  padding: 0 20px
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1)
+  z-index: 1000
+
+.main-container
+  display: flex
+  margin-top: 60px
+  /* Offset for fixed top bar */
+  min-height: calc(100vh - 60px)
+
+
+.side-bar
+  width: 250px
+  background: white
+  padding: 20px 0
+  border-right: 1px solid #e0e0e0
+  transition: width 0.3s ease
+
+
+.side-bar nav
+  display: flex
+  flex-direction: column
+
+
+.side-bar a
+  padding: 15px 20px
+  color: #555
+  text-decoration: none
+  border-left: 3px solid transparent
+  transition: all 0.2s
+
+
+.side-bar a:hover
+  background: #f8f9fa
+  color: #4a6cf7
+
+
+.main-content
+  flex: 1
+  background: #f8f9fa
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  min-height: 100vh
+  padding: 2rem
+
+  form
+    width: 100%
+    max-width: 400px
+    background: white
+    padding: 2rem
+    border-radius: 12px
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1)
+
+    input
+      display: block
+      width: 100%
+      margin-bottom: 1rem
+      padding: 0.75rem 1rem
+      border: 1px solid #e0e0e0
+      border-radius: 8px
+      font-size: 1rem
+      transition: border-color 0.3s
+
+      &:focus
+        outline: none
+        border-color: #4361ee
+
+    button
+      width: 100%
+      padding: 0.75rem
+      background: #4361ee
+      color: white
+      border: none
+      border-radius: 8px
+      font-size: 1rem
+      font-weight: 600
+      cursor: pointer
+      transition: background 0.3s
+
+      &:hover
+        background: #3a56d4
+
+  p
+    margin-top: 1.5rem
+    text-align: center
+    color: #666
+
+    a
+      color: #4361ee
+      text-decoration: none
+
+      &:hover
+        text-decoration: underline
+
+@media (max-width: 768px)
+  .main-content
+    padding: 1rem
+
+    form
+      padding: 1.5rem
+      max-width: 100%
+
+@media (max-width: 768px)
+  .side-bar
+    position: fixed
+    left: -250px
+    top: 60px
+    bottom: 0
+    z-index: 999
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1)
+
+  .main-content
+    width: 100%
+
+.toast
+  position: fixed
+  bottom: 20px
+  left: 50%
+  transform: translateX(-50%)
+  width: 90%
+  max-width: 600px
+  background: #fff
+  border-radius: 12px
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2)
+  z-index: 1000
+  animation: toastSlideUp 0.4s ease-out
+
+.toast-content
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 20px
+  border-left: 6px solid #ff4757
+  background: #fff
+  border-radius: 12px
+  position: relative
+
+.error-message
+  flex: 1
+
+.error-message p
+  margin: 0 0 8px 0
+  font-weight: bold
+  color: #333
+  font-size: 16px
+
+
+.error-message ul
+  margin: 0
+  padding-left: 20px
+
+.error-message li
+  color: #ff4757
+  margin: 5px 0
+  font-size: 15px
+
+@keyframes toastSlideUp
+  from
+    opacity: 0
+    transform: translateX(-50%) translateY(100%)
+
+  to
+    opacity: 1
+    transform: translateX(-50%) translateY(0)
