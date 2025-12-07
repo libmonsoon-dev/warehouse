@@ -1,5 +1,5 @@
 use crate::web::component::{SideBar, TopBar};
-use crate::web::page::{HomePage, SignIn, SignUp};
+use crate::web::page::{HomePage, NotFound, SignIn, SignUp};
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::{
@@ -38,7 +38,7 @@ pub fn App() -> impl IntoView {
             <div class="container">
                 <SideBar />
                 <main class="main-content">
-                    <Routes fallback=|| "Page not found.".into_view()>
+                    <Routes fallback=NotFound>
                         <Route path=StaticSegment("") view=HomePage />
                         <Route path=StaticSegment("/sign-in") view=SignIn />
                         <Route path=StaticSegment("/sign-up") view=SignUp />
