@@ -2,6 +2,10 @@ body {
   font-family: sans-serif;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 [aria-current]:not([aria-current="false"]) {
   font-weight: bold;
 }
@@ -54,8 +58,81 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 30px;
   background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+
+  form {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+
+      &:focus {
+        outline: none;
+        border-color: #4361ee;
+      }
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background: #3a56d4;
+      }
+    }
+  }
+
+  p {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #666;
+
+    a {
+      color: #4361ee;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+
+    form {
+      padding: 1.5rem;
+      max-width: 100%;
+    }
+  }
 }
 
 @media (max-width: 768px) {
