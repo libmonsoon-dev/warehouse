@@ -9,6 +9,27 @@ body
 
 @import top_bar, side_bar, toast
 
+button
+  padding: 0.75rem
+  background: #4361ee
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 1rem
+  font-weight: 600
+  cursor: pointer
+  transition: background 0.3s
+
+  &:hover
+    background: #3a56d4
+
+a
+  color: #4361ee
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
 .main-container
   display: flex
   margin-top: 60px
@@ -49,30 +70,11 @@ body
 
     button
       width: 100%
-      padding: 0.75rem
-      background: #4361ee
-      color: white
-      border: none
-      border-radius: 8px
-      font-size: 1rem
-      font-weight: 600
-      cursor: pointer
-      transition: background 0.3s
-
-      &:hover
-        background: #3a56d4
 
   p
     margin-top: 1.5rem
     text-align: center
     color: #666
-
-    a
-      color: #4361ee
-      text-decoration: none
-
-      &:hover
-        text-decoration: underline
 
 @media (max-width: 768px)
   .main-content
