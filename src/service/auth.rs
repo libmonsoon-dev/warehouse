@@ -4,13 +4,12 @@ use crate::domain::{AuthTokens, SignInData, SignUpData, User};
 use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::{Context, Result};
 use argon2::{
-    Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version,
-    password_hash::SaltString, password_hash::rand_core::OsRng,
+    password_hash::rand_core::OsRng, password_hash::SaltString, Algorithm, Argon2, Params, PasswordHash, PasswordHasher,
+    PasswordVerifier, Version,
 };
 use chrono::{Duration, Utc};
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use uuid::Uuid;
 
 #[derive(thiserror::Error, Debug)]
@@ -24,11 +23,11 @@ pub enum AuthError {
 
 pub struct AuthService {
     jwt_secret: SecretString,
-    user_repository: Arc<dyn UserRepository>,
+    user_repository: Box<dyn UserRepository>,
 }
 
 impl AuthService {
-    pub fn new(jwt_secret: SecretString, user_repository: Arc<dyn UserRepository>) -> Self {
+    pub fn new(jwt_secret: SecretString, user_repository: Box<dyn UserRepository>) -> Self {
         Self {
             jwt_secret,
             user_repository,

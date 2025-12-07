@@ -1,21 +1,20 @@
 use crate::contract::repository::error::RepositoryError;
 use crate::{
-    contract::repository::Repository, contract::repository::user::UserRepository, db, domain,
+    contract::repository::user::UserRepository, contract::repository::Repository, db, domain,
     repository::postgresql::models::User, repository::postgresql::schema::users,
 };
-use anyhow::{Context, Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use diesel::{prelude::*, result::DatabaseErrorKind};
 use diesel_async::RunQueryDsl;
 use secrecy::{ExposeSecret, SecretString};
-use std::sync::Arc;
 use uuid::Uuid;
 
 pub struct PostgresUserRepo {
-    pool: Arc<db::Pool>,
+    pool: db::Pool,
 }
 
 impl PostgresUserRepo {
-    pub fn new(pool: Arc<db::Pool>) -> Self {
+    pub fn new(pool: db::Pool) -> Self {
         PostgresUserRepo { pool }
     }
 }
