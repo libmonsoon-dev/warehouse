@@ -20,7 +20,7 @@ body {
   z-index: 1000;
 }
 
-.container {
+.main-container {
   display: flex;
   margin-top: 60px; /* Offset for fixed top bar */
   min-height: calc(100vh - 60px);

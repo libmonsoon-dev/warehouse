@@ -35,7 +35,7 @@ pub fn App() -> impl IntoView {
         <Title text="Warehouse" />
         <Router>
             <TopBar />
-            <div class="container">
+            <div class="main-container">
                 <SideBar />
                 <main class="main-content">
                     <Routes fallback=NotFound>
