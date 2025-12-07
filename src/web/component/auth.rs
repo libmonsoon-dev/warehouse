@@ -25,7 +25,7 @@ pub fn LogOutButton() -> impl IntoView {
 
     move || {
         tokens.get().map(|_| {
-            view! {<button on:click=move |_| {set_tokens.set(None)}>Logout</button>}
+            view! { <button on:click=move |_| { set_tokens.set(None) }>Logout</button> }
         })
     }
 }
@@ -50,3 +50,5 @@ pub fn use_delayed_auth_tokens() -> (
 }
 
 const AUTH_TOKENS_LOCAL_STORAGE_KEY: &str = "authTokens";
+
+pub const UNAUTHORIZED_PATHS: &[&str] = &["/sign-up", "/sign-in"];
