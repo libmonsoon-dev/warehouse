@@ -1,6 +1,6 @@
 use crate::domain::AuthTokens;
 use crate::dto::auth::SignInRequest;
-use crate::web::component::use_auth_tokens;
+use crate::web::component::{ErrorMessage, WebError, use_auth_tokens};
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 use leptos_router::components::A;
@@ -25,11 +25,14 @@ pub fn SignIn() -> impl IntoView {
         password: password.get(),
     };
 
-    let sign_in_action = Action::new(move |input: &SignInRequest| {
+    let sign_in_action = Action::<SignInRequest, Result<(), WebError>>::new(move |input| {
         let input = input.to_owned();
         async move {
-            let tokens = sign_in(input).await.unwrap(); //TODO: remove unwrap
+            //TODO: reactive validation
+            input.validate()?;
+            let tokens = sign_in(input).await?;
             set_tokens.set(Some(tokens));
+            Ok(())
         }
     });
 
@@ -55,6 +58,7 @@ pub fn SignIn() -> impl IntoView {
         </form>
         {move || sign_in_action.pending().get().then_some(view! { <p>"Signing in..."</p> })}
         <p>"Don't have an account yet? "<A href="/sign-up">"Sign up"</A></p>
+        <ErrorMessage>{move || sign_in_action.value().get()}</ErrorMessage>
     }
 }
 
