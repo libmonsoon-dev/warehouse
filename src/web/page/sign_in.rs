@@ -1,6 +1,6 @@
 use crate::domain::AuthTokens;
 use crate::dto::auth::SignInRequest;
-use crate::web::component::{ErrorMessage, WebError, use_auth_tokens};
+use crate::web::component::{ErrorToast, WebError, use_auth_tokens};
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 use leptos_router::components::A;
@@ -58,7 +58,7 @@ pub fn SignIn() -> impl IntoView {
         </form>
         {move || sign_in_action.pending().get().then_some(view! { <p>"Signing in..."</p> })}
         <p>"Don't have an account yet? "<A href="/sign-up">"Sign up"</A></p>
-        <ErrorMessage>{move || sign_in_action.value().get()}</ErrorMessage>
+        <ErrorToast>{move || sign_in_action.value().get()}</ErrorToast>
     }
 }
 

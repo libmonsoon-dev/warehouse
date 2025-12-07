@@ -6,25 +6,28 @@ use leptos::tachys::no_attrs;
 use leptos::tachys::renderer::CastFrom;
 use leptos::tachys::renderer::Rndr;
 use leptos::tachys::view::{Position, PositionState};
-use std::sync::Arc;
 use validator::ValidationErrors;
 
 #[component]
-pub fn ErrorMessage(children: Children) -> impl IntoView {
+pub fn ErrorToast(children: Children) -> impl IntoView {
     view! {
         <ErrorBoundary fallback=|errors| {
             view! {
-                <div>
-                    <p>"An error occurred:"</p>
-                    <ul>
-                        {move || {
-                            errors
-                                .get()
-                                .into_iter()
-                                .map(|(_, e)| view! { <li>{e.to_string()}</li> })
-                                .collect::<Vec<_>>()
-                        }}
-                    </ul>
+                <div class="toast">
+                    <div class="toast-content">
+                        <div class="error-message">
+                            <p>"An error occurred:"</p>
+                            <ul>
+                                {move || {
+                                    errors
+                                        .get()
+                                        .into_iter()
+                                        .map(|(_, e)| view! { <li>{e.to_string()}</li> })
+                                        .collect::<Vec<_>>()
+                                }}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             }
         }>{children()}</ErrorBoundary>
