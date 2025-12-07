@@ -8,32 +8,6 @@ use leptos::tachys::renderer::Rndr;
 use leptos::tachys::view::{Position, PositionState};
 use validator::ValidationErrors;
 
-#[component]
-pub fn ErrorToast(children: Children) -> impl IntoView {
-    view! {
-        <ErrorBoundary fallback=|errors| {
-            view! {
-                <div class="toast">
-                    <div class="toast-content">
-                        <div class="error-message">
-                            <p>"An error occurred:"</p>
-                            <ul>
-                                {move || {
-                                    errors
-                                        .get()
-                                        .into_iter()
-                                        .map(|(_, e)| view! { <li>{e.to_string()}</li> })
-                                        .collect::<Vec<_>>()
-                                }}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            }
-        }>{children()}</ErrorBoundary>
-    }
-}
-
 no_attrs!(WebError);
 
 #[derive(Clone)]
@@ -41,12 +15,14 @@ pub struct WebError(pub String);
 
 impl From<ValidationErrors> for WebError {
     fn from(err: ValidationErrors) -> Self {
+        //TODO: error message
         Self(err.to_string())
     }
 }
 
 impl From<ServerFnError> for WebError {
     fn from(value: ServerFnError) -> Self {
+        //TODO: error message
         Self(format!("{}", value))
     }
 }

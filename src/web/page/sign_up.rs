@@ -1,6 +1,6 @@
 use crate::domain::AuthTokens;
 use crate::dto::auth::SignUpRequest;
-use crate::web::component::{use_auth_tokens, ErrorToast, WebError};
+use crate::web::component::{use_auth_tokens, ErrorToast, Toast, WebError};
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 use leptos_router::components::A;
@@ -69,11 +69,12 @@ pub fn SignUp() -> impl IntoView {
                 on:input:target=move |ev| set_password.set(ev.target().value())
                 prop:value=password
             />
-
             <button type="submit">Sign up</button>
         </form>
-        {move || sign_up_action.pending().get().then_some(view! { <p>"Signing in..."</p> })}
         <p>"Already have an account? "<A href="/sign-in">Sign in</A></p>
+        <Toast when=move || sign_up_action.pending().get()>
+            <p>"Signing in..."</p>
+        </Toast>
         <ErrorToast>{move || sign_up_action.value().get()}</ErrorToast>
     }
 }
@@ -84,6 +85,7 @@ async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, ServerFnError> {
     use crate::state::AppState;
 
     //TODO: error type
+    //TODO: error message
     req.validate()?;
 
     let tokens = expect_context::<AppState>()
