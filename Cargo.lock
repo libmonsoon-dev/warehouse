@@ -656,8 +656,9 @@ dependencies = [
 
 [[package]]
 name = "despatma"
-version = "0.3.7"
-source = "git+https://github.com/libmonsoon-dev/despatma?branch=embedded-dependency#735eeb27b3b11cd3d3c00aaf7fa09ca390ed1fa5"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68cba978469a12019e9193f22d93b9e9ffbcbc8a788c736e879f38aa11e0e8b2"
 dependencies = [
  "async-once-cell",
  "despatma-abstract-factory",
@@ -668,8 +669,9 @@ dependencies = [
 
 [[package]]
 name = "despatma-abstract-factory"
-version = "0.3.7"
-source = "git+https://github.com/libmonsoon-dev/despatma?branch=embedded-dependency#735eeb27b3b11cd3d3c00aaf7fa09ca390ed1fa5"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f3337b1aebbf07a75427eaa73ccf79a73d6a2ff34127919388e779a0e4e48a87"
 dependencies = [
  "despatma-lib",
  "proc-macro2",
@@ -680,8 +682,9 @@ dependencies = [
 
 [[package]]
 name = "despatma-dependency-container"
-version = "0.3.7"
-source = "git+https://github.com/libmonsoon-dev/despatma?branch=embedded-dependency#735eeb27b3b11cd3d3c00aaf7fa09ca390ed1fa5"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c19549a2972b88b32b5946c545acf9c9e50a32b8581620cd3b3d67f82985502a"
 dependencies = [
  "despatma-visitor",
  "proc-macro-error2",
@@ -693,8 +696,9 @@ dependencies = [
 
 [[package]]
 name = "despatma-lib"
-version = "0.3.7"
-source = "git+https://github.com/libmonsoon-dev/despatma?branch=embedded-dependency#735eeb27b3b11cd3d3c00aaf7fa09ca390ed1fa5"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b50f67d63200a38e3b1341fe1fc04922a40d5470d3d3b567b2e57d2569c0dd53"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -704,8 +708,9 @@ dependencies = [
 
 [[package]]
 name = "despatma-visitor"
-version = "0.3.7"
-source = "git+https://github.com/libmonsoon-dev/despatma?branch=embedded-dependency#735eeb27b3b11cd3d3c00aaf7fa09ca390ed1fa5"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a21a91c654a32aafd90640c5f6a6de24ba1a0dd39f4c4181d9608c4689b9587"
 dependencies = [
  "convert_case 0.9.0",
  "despatma-lib",
