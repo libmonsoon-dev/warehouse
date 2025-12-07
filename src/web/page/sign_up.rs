@@ -75,6 +75,7 @@ pub fn SignUp() -> impl IntoView {
 }
 
 #[server]
+//TODO: #[tracing::instrument(skip(req))]
 async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, ServerFnError> {
     use crate::state::AppState;
 

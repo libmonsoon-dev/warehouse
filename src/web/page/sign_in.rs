@@ -59,6 +59,7 @@ pub fn SignIn() -> impl IntoView {
 }
 
 #[server]
+//TODO: #[tracing::instrument(skip(req))]
 async fn sign_in(req: SignInRequest) -> Result<AuthTokens, ServerFnError> {
     use crate::state::AppState;
 
