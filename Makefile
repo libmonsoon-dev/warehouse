@@ -1,3 +1,5 @@
+SHELL=/bin/bash -o pipefail
+
 dev:
 	cargo watch \
 		--exec "check --features=ssr" \
