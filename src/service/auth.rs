@@ -141,10 +141,10 @@ impl AuthService {
     #[tracing::instrument(skip(self, token))]
     pub fn decode_access_jwt(
         &self,
-        token: String,
+        token: &str,
     ) -> Result<jsonwebtoken::TokenData<AccessTokenClaims>> {
         jsonwebtoken::decode(
-            &token,
+            token,
             &jsonwebtoken::DecodingKey::from_secret(self.jwt_secret.expose_secret().as_ref()),
             &jsonwebtoken::Validation::default(),
         )
