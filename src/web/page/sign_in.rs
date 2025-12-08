@@ -1,5 +1,4 @@
-use crate::domain::AuthTokens;
-use crate::dto::auth::SignInRequest;
+use crate::dto::{AuthTokens, SignInRequest};
 use crate::web::component::{ErrorToast, Toast, WebError, use_auth_tokens};
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};

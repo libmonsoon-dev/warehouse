@@ -1,15 +1,17 @@
-use crate::contract::repository::error::RepositoryError;
-use crate::contract::repository::user::UserRepository;
-use crate::domain::{AuthTokens, SignInData, SignUpData, User};
-use crate::telemetry::spawn_blocking_with_tracing;
+use crate::{
+    contract::repository::error::RepositoryError,
+    contract::repository::user::UserRepository,
+    domain::{SignInData, SignUpData, User},
+    dto::{AccessTokenClaims, AuthTokens},
+    telemetry::spawn_blocking_with_tracing,
+};
 use anyhow::{Context, Result};
 use argon2::{
-    password_hash::rand_core::OsRng, password_hash::SaltString, Algorithm, Argon2, Params, PasswordHash, PasswordHasher,
-    PasswordVerifier, Version,
+    Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version,
+    password_hash::SaltString, password_hash::rand_core::OsRng,
 };
 use chrono::{Duration, Utc};
 use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(thiserror::Error, Debug)]
@@ -119,8 +121,8 @@ impl AuthService {
     pub fn encode_access_jwt(&self, user: &User) -> Result<String> {
         let now = Utc::now();
         let expire = Duration::hours(24);
-        let exp: usize = (now + expire).timestamp() as usize;
-        let iat: usize = now.timestamp() as usize;
+        let exp = (now + expire).timestamp();
+        let iat = now.timestamp();
         let claim = AccessTokenClaims {
             iat,
             exp,
@@ -182,12 +184,4 @@ fn new_argon() -> Argon2<'static> {
         Version::V0x13,
         Params::new(15000, 2, 1, None).unwrap(),
     )
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AccessTokenClaims {
-    pub exp: usize,
-    pub iat: usize,
-    pub id: Uuid,
-    pub email: String,
 }

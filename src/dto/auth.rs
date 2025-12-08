@@ -2,6 +2,7 @@ use crate::domain::SignInData;
 use crate::domain::auth::SignUpData;
 use secrecy::SecretString;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 use validator::Validate;
 
 #[derive(Serialize, Deserialize, Validate, Clone, Debug)]
@@ -55,4 +56,18 @@ impl Into<SignUpData> for SignUpRequest {
             password: SecretString::from(password),
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct AccessTokenClaims {
+    pub exp: i64,
+    pub iat: i64,
+    pub id: Uuid,
+    pub email: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct AuthTokens {
+    pub access_token: String,
+    //TODO: refresh_token
 }

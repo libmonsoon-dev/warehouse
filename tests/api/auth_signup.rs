@@ -5,8 +5,7 @@ use fake::Fake;
 use pretty_assertions::assert_eq;
 use secrecy::ExposeSecret;
 use uuid::Uuid;
-use warehouse::domain::AuthTokens;
-use warehouse::service::auth::AccessTokenClaims;
+use warehouse::dto::{AccessTokenClaims, AuthTokens};
 
 #[tokio::test]
 async fn signup_works() {
@@ -41,8 +40,8 @@ async fn signup_works() {
         jsonwebtoken::dangerous::insecure_decode::<AccessTokenClaims>(tokens.access_token)
             .expect("Failed to decode access token.");
 
-    assert_le!(access_token.claims.iat, Utc::now().timestamp() as usize);
-    assert_gt!(access_token.claims.exp, Utc::now().timestamp() as usize);
+    assert_le!(access_token.claims.iat, Utc::now().timestamp());
+    assert_gt!(access_token.claims.exp, Utc::now().timestamp());
 
     let user_repository = app.dependency.user_repository().await;
     let user_in_db = user_repository

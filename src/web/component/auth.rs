@@ -1,4 +1,4 @@
-use crate::domain::AuthTokens;
+use crate::dto::AuthTokens;
 use codee::string::JsonSerdeCodec;
 use leptos::component;
 use leptos::prelude::*;

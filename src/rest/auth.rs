@@ -1,5 +1,9 @@
 use crate::{
-    domain::auth::AuthTokens, dto::auth::SignInRequest, dto::auth::SignUpRequest,
+    dto::{
+        SignInRequest,
+        AuthTokens,
+        SignUpRequest
+    },
     rest::error::Error, state::AppState,
 };
 use anyhow::Result;
