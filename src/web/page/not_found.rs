@@ -1,4 +1,3 @@
-use leptos::IntoView;
 use leptos::prelude::*;
 
 #[component]

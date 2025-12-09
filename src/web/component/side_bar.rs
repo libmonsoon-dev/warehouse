@@ -1,6 +1,5 @@
 use crate::web::component::UNAUTHORIZED_PATHS;
 use leptos::prelude::*;
-use leptos::{IntoView, component, view};
 use leptos_router::components::A;
 use leptos_router::hooks::use_location;
 

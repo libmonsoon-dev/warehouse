@@ -1,4 +1,3 @@
-use leptos::children::Children;
 use leptos::prelude::*;
 
 #[component]

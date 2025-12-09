@@ -1,8 +1,6 @@
 use crate::dto::AuthTokens;
 use codee::string::JsonSerdeCodec;
-use leptos::component;
 use leptos::prelude::*;
-use leptos::{IntoView, view};
 use leptos_use::storage::{UseStorageOptions, use_local_storage, use_local_storage_with_options};
 
 #[component]
