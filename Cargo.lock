@@ -1169,8 +1169,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "335ff9f135e4384c8150d6f27c6daed433577f86b4750418338c01a1a2528592"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -4095,6 +4097,9 @@ dependencies = [
  "diesel_migrations",
  "dotenvy",
  "fake",
+ "futures",
+ "getrandom 0.2.16",
+ "http",
  "jsonwebtoken",
  "leptos",
  "leptos-use",
@@ -4108,6 +4113,7 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.17",
  "tokio",
+ "tower",
  "tower-http",
  "trace_id",
  "tracing",

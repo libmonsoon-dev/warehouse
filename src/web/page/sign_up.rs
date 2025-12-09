@@ -1,5 +1,6 @@
 use crate::dto::{AuthTokens, SignUpRequest};
-use crate::web::component::{use_auth_tokens, ErrorToast, Toast, WebError};
+use crate::web::component::{ErrorToast, Toast, WebError};
+use crate::web::utils::use_auth_tokens;
 use leptos::prelude::*;
 use leptos_router::components::A;
 use validator::Validate;

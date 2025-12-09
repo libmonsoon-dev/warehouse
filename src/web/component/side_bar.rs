@@ -1,4 +1,4 @@
-use crate::web::component::UNAUTHORIZED_PATHS;
+use crate::web::utils::UNAUTHORIZED_PATHS;
 use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::use_location;

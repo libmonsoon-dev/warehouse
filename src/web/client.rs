@@ -1,5 +1,5 @@
 use crate::contract::http::{AUTHORIZATION_HEADER, AUTHORIZATION_SCHEME};
-use crate::web::component::use_auth_tokens;
+use crate::web::utils::use_auth_tokens;
 use futures::{Sink, Stream};
 use leptos::server_fn::response::ClientRes;
 use leptos::{

@@ -1,8 +1,9 @@
 use crate::dto::{AuthTokens, SignInRequest};
-use crate::web::component::{ErrorToast, Toast, WebError, use_auth_tokens};
+use crate::web::component::{ErrorToast, Toast, WebError};
 use leptos::prelude::*;
 use leptos_router::components::A;
 use validator::Validate;
+use crate::web::utils::use_auth_tokens;
 
 #[component]
 pub fn SignIn() -> impl IntoView {

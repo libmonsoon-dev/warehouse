@@ -5,6 +5,7 @@ mod error;
 mod client;
 #[cfg(feature = "ssr")]
 mod middleware;
+mod utils;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

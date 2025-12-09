@@ -1,7 +1,5 @@
-use crate::dto::AuthTokens;
-use codee::string::JsonSerdeCodec;
+use crate::web::utils::{use_auth_tokens, use_delayed_auth_tokens};
 use leptos::prelude::*;
-use leptos_use::storage::{UseStorageOptions, use_local_storage, use_local_storage_with_options};
 
 #[component]
 pub fn Authorized(children: Children) -> impl IntoView {
@@ -27,26 +25,3 @@ pub fn LogOutButton() -> impl IntoView {
         })
     }
 }
-
-pub fn use_auth_tokens() -> (
-    Signal<Option<AuthTokens>>,
-    WriteSignal<Option<AuthTokens>>,
-    impl Fn() + Clone + Send + Sync,
-) {
-    use_local_storage::<Option<AuthTokens>, JsonSerdeCodec>(AUTH_TOKENS_LOCAL_STORAGE_KEY)
-}
-
-pub fn use_delayed_auth_tokens() -> (
-    Signal<Option<AuthTokens>>,
-    WriteSignal<Option<AuthTokens>>,
-    impl Fn() + Clone + Send + Sync,
-) {
-    use_local_storage_with_options::<Option<AuthTokens>, JsonSerdeCodec>(
-        AUTH_TOKENS_LOCAL_STORAGE_KEY,
-        UseStorageOptions::default().delay_during_hydration(true),
-    )
-}
-
-const AUTH_TOKENS_LOCAL_STORAGE_KEY: &str = "authTokens";
-
-pub const UNAUTHORIZED_PATHS: &[&str] = &["/sign-up", "/sign-in"];

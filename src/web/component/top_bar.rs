@@ -1,4 +1,5 @@
-use crate::web::component::{LogOutButton, UNAUTHORIZED_PATHS};
+use crate::web::component::LogOutButton;
+use crate::web::utils::UNAUTHORIZED_PATHS;
 use leptos::prelude::*;
 use leptos_router::hooks::use_location;
 
