@@ -1,5 +1,5 @@
 use crate::contract::http::{AUTHORIZATION_HEADER, AUTHORIZATION_SCHEME};
-use crate::state::AppState;
+use crate::web::utils::{expect_app_state, expect_response_options};
 use anyhow::{Context, Error, anyhow};
 use axum::body::Body;
 use http::Request;
@@ -7,7 +7,6 @@ use http::StatusCode;
 use http::header::HeaderMap;
 use leptos::prelude::*;
 use leptos::server_fn::middleware::BoxedService;
-use leptos_axum::ResponseOptions;
 use leptos_axum::extract;
 use std::{pin::Pin, task::Poll};
 use tower::{Layer, Service};
@@ -45,7 +44,7 @@ impl Service<Request<Body>> for AuthorizationService {
         let future = self.inner.call(req);
 
         Box::pin(async move {
-            let response = expect_context::<ResponseOptions>();
+            let response = expect_response_options();
             println!("Response: {response:?}");
             match provide_access_token().await {
                 Ok(_) => {}
@@ -80,7 +79,7 @@ async fn provide_access_token() -> Result<(), Error> {
         ));
     };
 
-    let token = expect_context::<AppState>()
+    let token = expect_app_state()
         .dependencies
         .auth_service()
         .await

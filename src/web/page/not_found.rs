@@ -4,8 +4,8 @@ use leptos::prelude::*;
 pub fn NotFound() -> impl IntoView {
     #[cfg(feature = "ssr")]
     {
-        let resp = expect_context::<leptos_axum::ResponseOptions>();
-        resp.set_status(axum::http::StatusCode::NOT_FOUND);
+        let resp = crate::web::utils::expect_response_options();
+        resp.set_status(http::StatusCode::NOT_FOUND);
     }
 
     view! { <h1>"Page not found"</h1> }
