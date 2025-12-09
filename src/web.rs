@@ -2,6 +2,9 @@ pub mod app;
 mod page;
 mod component;
 mod error;
+mod client;
+#[cfg(feature = "ssr")]
+mod middleware;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

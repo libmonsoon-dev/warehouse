@@ -1,6 +1,5 @@
 #[cfg(feature = "ssr")]
 pub mod config;
-#[cfg(feature = "ssr")]
 pub mod contract;
 #[cfg(feature = "ssr")]
 pub mod db;
