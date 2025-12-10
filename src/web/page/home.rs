@@ -2,15 +2,20 @@ use crate::dto::AccessTokenClaims;
 use crate::web::client::CustomClient;
 use crate::web::component::Authorized;
 use leptos::prelude::*;
+use tracing_log::log;
 
 #[component]
 pub fn HomePage() -> impl IntoView {
+    //TODO: remove this
     let decode_jwt_resource = LocalResource::new(move || decode_jwt());
+
+    Effect::new(move |_| {
+        log::info!("auth token {:?}", decode_jwt_resource.get());
+    });
 
     view! {
         <Authorized>
             <h1>"Welcome to warehouse!"</h1>
-            <code>{move || serde_json::to_string_pretty(&decode_jwt_resource.get())}</code>
         </Authorized>
     }
 }

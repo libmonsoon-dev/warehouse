@@ -78,8 +78,8 @@ pub fn SignUp() -> impl IntoView {
     }
 }
 
+#[tracing::instrument(skip(req))]
 #[server]
-//TODO: #[tracing::instrument(skip(req))]
 async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, ServerFnError> {
     //TODO: error type
     //TODO: error message

@@ -17,6 +17,5 @@ pub mod server;
 pub mod service;
 #[cfg(feature = "ssr")]
 pub mod state;
-#[cfg(feature = "ssr")]
 pub mod telemetry;
 pub mod web;
