@@ -9,9 +9,7 @@ use tokio::{net::TcpListener, signal};
 use tower_http::timeout::TimeoutLayer;
 use trace_id::TraceIdLayer;
 
-pub async fn run(dependencies: AppContainer<'static>, listener: TcpListener) {
-    let conf = get_configuration(None).unwrap();
-    let leptos_options = conf.leptos_options;
+pub async fn run(leptos_options: LeptosOptions, dependencies: AppContainer<'static>, listener: TcpListener) {
     let routes = generate_route_list(App);
 
     let app_state = AppState {

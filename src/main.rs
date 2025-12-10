@@ -12,13 +12,16 @@ async fn main() {
 
     let conf = get_configuration().expect("Failed to read configuration");
 
-    let listener = TcpListener::bind(format!("0.0.0.0:{}", conf.server.port))
+    let dependency = AppContainer::new(conf);
+    let leptos_options = leptos::config::get_configuration(None)
+        .expect("leptos configuration")
+        .leptos_options;
+
+    let listener = TcpListener::bind(leptos_options.site_addr)
         .await
         .expect("Failed to bind");
 
-    let dependency = AppContainer::new(conf);
-
-    server::run(dependency, listener).await;
+    server::run(leptos_options, dependency, listener).await;
 }
 
 #[cfg(not(feature = "ssr"))]

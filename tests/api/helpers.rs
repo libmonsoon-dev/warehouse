@@ -3,6 +3,7 @@ use diesel::pg::PgConnection;
 use diesel::sql_query;
 use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl};
 use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
+use leptos::config::LeptosOptions;
 use reqwest::header::CONTENT_TYPE;
 use reqwest::{Error, Response};
 use secrecy::{ExposeSecret, SecretString};
@@ -85,6 +86,8 @@ pub async fn spawn_app<'a>() -> TestApp<'a> {
         password: SecretString::from("admin-pass"),
     };
 
+    let leptos_options = LeptosOptions::builder().output_name("test").build();
+
     dependency
         .auth_service()
         .await
@@ -92,7 +95,7 @@ pub async fn spawn_app<'a>() -> TestApp<'a> {
         .await
         .expect("Failed to create admin user");
 
-    let server = server::run(dependency.clone(), listener);
+    let server = server::run(leptos_options, dependency.clone(), listener);
     let _ = tokio::spawn(server);
     TestApp {
         address,
