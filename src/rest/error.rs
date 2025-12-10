@@ -1,13 +1,14 @@
 use crate::{contract::repository::error::RepositoryError, service::auth::AuthError};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
+use tracing_log::log;
 use validator::ValidationError;
 
 pub struct Error(anyhow::Error);
 
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
-        tracing::error!("{:?}", self.0);
+        log::error!("{:?}", self.0);
 
         for cause in self.0.chain() {
             if let Some(cause) = cause.downcast_ref::<ValidationError>() {
