@@ -45,6 +45,7 @@ futures = "0.3"
 http = "1.4"
 tower = "0.5.2"
 getrandom = "0.2.16"
+url = "2.5.7"
 
 [dev-dependencies]
 reqwest = { version = "0.12", features = ["json"] }
