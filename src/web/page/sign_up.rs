@@ -82,8 +82,6 @@ pub fn SignUp() -> impl IntoView {
 #[tracing::instrument(skip(req))]
 #[server]
 async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, ServerError> {
-    //TODO: error type
-    //TODO: error message
     req.validate()?;
 
     let tokens = crate::web::utils::expect_app_state()

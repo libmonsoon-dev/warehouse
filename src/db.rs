@@ -4,10 +4,11 @@ use diesel_async::AsyncPgConnection;
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
 use secrecy::ExposeSecret;
 
-pub type Pool = deadpool::managed::Pool<
-    AsyncDieselConnectionManager<AsyncPgConnection>,
-    Object<AsyncDieselConnectionManager<AsyncPgConnection>>,
->;
+pub type ConnectionManager = AsyncDieselConnectionManager<AsyncPgConnection>;
+
+pub type Connection = Object<ConnectionManager>;
+
+pub type Pool = deadpool::managed::Pool<ConnectionManager, Connection>;
 
 pub async fn connect(conf: &DatabaseConfig) -> Pool {
     let conn_manager = AsyncDieselConnectionManager::<AsyncPgConnection>::new(

@@ -5,7 +5,8 @@ use fake::Fake;
 use pretty_assertions::assert_eq;
 use secrecy::ExposeSecret;
 use uuid::Uuid;
-use warehouse::dto::{AccessTokenClaims, AuthTokens};
+use warehouse::contract::error::ErrorCode;
+use warehouse::dto::{AccessTokenClaims, AppError, AuthTokens};
 
 #[tokio::test]
 async fn sign_in_works() {
@@ -58,7 +59,13 @@ async fn sign_in_with_invalid_email_fails() {
 
     // Assert
     assert_eq!(response.status(), 401);
-    assert_eq!(response.content_length(), Some(0));
+    assert_eq!(
+        response.json::<AppError>().await.unwrap(),
+        AppError {
+            code: ErrorCode::AuthenticationFailed,
+            message: "Invalid login or password".to_string()
+        }
+    );
 }
 
 #[tokio::test]
@@ -81,5 +88,11 @@ async fn sign_in_with_invalid_password_fails() {
 
     // Assert
     assert_eq!(response.status(), 401);
-    assert_eq!(response.content_length(), Some(0));
+    assert_eq!(
+        response.json::<AppError>().await.unwrap(),
+        AppError {
+            code: ErrorCode::AuthenticationFailed,
+            message: "Invalid login or password".to_string()
+        }
+    );
 }

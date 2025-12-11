@@ -1,39 +1,16 @@
-use crate::{contract::repository::error::RepositoryError, service::auth::AuthError};
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
+use crate::contract::error::ErrorCode;
+use crate::dto::AppError;
+use axum::Json;
+use axum::response::{IntoResponse, Response};
 use tracing_log::log;
-use validator::ValidationError;
 
 pub struct ServerError(anyhow::Error);
 
 impl IntoResponse for ServerError {
-    fn into_response(self) -> axum::response::Response {
+    fn into_response(self) -> Response {
         log::error!("{:?}", self.0);
 
-        for cause in self.0.chain() {
-            if let Some(cause) = cause.downcast_ref::<ValidationError>() {
-                return (StatusCode::BAD_REQUEST, cause.to_string()).into_response();
-            }
-
-            if let Some(auth_error) = cause.downcast_ref::<AuthError>() {
-                match auth_error {
-                    AuthError::InvalidCredentials(_) => {
-                        return StatusCode::UNAUTHORIZED.into_response();
-                    }
-                    AuthError::UnexpectedError(_) => continue,
-                }
-            }
-
-            if let Some(repo_error) = cause.downcast_ref::<RepositoryError>() {
-                match repo_error {
-                    RepositoryError::NotFound => return StatusCode::NOT_FOUND.into_response(),
-                    RepositoryError::Exists(_) => return StatusCode::CONFLICT.into_response(),
-                    RepositoryError::UnexpectedError(_) => continue,
-                }
-            }
-        }
-
-        StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        AppError::from(ErrorCode::from(self.0.chain())).into_response()
     }
 }
 
@@ -43,5 +20,15 @@ where
 {
     fn from(err: E) -> Self {
         Self(err.into())
+    }
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        let status = self.code.status_code();
+        let mut response = Json::from(self).into_response();
+        *response.status_mut() = status;
+
+        response
     }
 }

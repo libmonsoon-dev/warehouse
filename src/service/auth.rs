@@ -1,10 +1,8 @@
-use crate::{
-    contract::repository::error::RepositoryError,
-    contract::repository::user::UserRepository,
-    domain::{SignInData, SignUpData, User},
-    dto::{AccessTokenClaims, AuthTokens},
-    telemetry::spawn_blocking_with_tracing,
-};
+use crate::contract::repository::user::UserRepository;
+use crate::domain::{AuthError, RepositoryError};
+use crate::domain::{SignInData, SignUpData, User};
+use crate::dto::{AccessTokenClaims, AuthTokens};
+use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::{Context, Result};
 use argon2::{
     Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version,
@@ -13,15 +11,6 @@ use argon2::{
 use chrono::{Duration, Utc};
 use secrecy::{ExposeSecret, SecretString};
 use uuid::Uuid;
-
-#[derive(thiserror::Error, Debug)]
-pub enum AuthError {
-    #[error("Invalid credentials.")]
-    InvalidCredentials(#[source] anyhow::Error),
-
-    #[error(transparent)]
-    UnexpectedError(#[from] anyhow::Error),
-}
 
 pub struct AuthService {
     jwt_secret: SecretString,

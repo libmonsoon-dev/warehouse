@@ -1,5 +1,4 @@
-use crate::domain::SignInData;
-use crate::domain::auth::SignUpData;
+use crate::domain::{SignInData, SignUpData};
 use secrecy::SecretString;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;

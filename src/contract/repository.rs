@@ -1,7 +1,6 @@
 use anyhow::Result;
 use uuid::Uuid;
 
-pub mod error;
 pub mod user;
 
 #[async_trait::async_trait]

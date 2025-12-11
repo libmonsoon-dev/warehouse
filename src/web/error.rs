@@ -1,10 +1,12 @@
-use anyhow::Error;
-use anyhow::anyhow;
+use crate::contract::error::ErrorCode;
+use crate::dto::AppError;
+use anyhow::{anyhow, Error};
 use bytes::Bytes;
 use leptos::prelude::*;
 use leptos::server_fn::{ContentType, Decodes, Encodes, Format, FormatType};
 use std::fmt::{Debug, Display, Formatter};
 use std::string::FromUtf8Error;
+use tracing_log::log;
 
 pub struct ServerError(Error);
 
@@ -57,7 +59,11 @@ impl Encodes<ServerError> for ServerErrorEncoder {
     type Error = std::fmt::Error;
 
     fn encode(output: &ServerError) -> Result<Bytes, Self::Error> {
-        Ok(Bytes::from(output.0.to_string()))
+        log::error!("{:?}", output.0);
+
+        Ok(Bytes::from(
+            AppError::from(ErrorCode::from(output.0.chain())).message,
+        ))
     }
 }
 
