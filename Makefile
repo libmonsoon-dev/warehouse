@@ -8,11 +8,7 @@ dev:
 		--clear
 
 dev-server:
-	while true; do \
-		killall warehouse --wait || true; \
-		cargo leptos watch | bunyan; \
-	done; \
-	true
+	cargo leptos watch | bunyan
 
 lint:
 	cargo clippy -- -D warnings
