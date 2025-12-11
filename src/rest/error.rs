@@ -4,9 +4,9 @@ use axum::response::IntoResponse;
 use tracing_log::log;
 use validator::ValidationError;
 
-pub struct Error(anyhow::Error);
+pub struct ServerError(anyhow::Error);
 
-impl IntoResponse for Error {
+impl IntoResponse for ServerError {
     fn into_response(self) -> axum::response::Response {
         log::error!("{:?}", self.0);
 
@@ -37,7 +37,7 @@ impl IntoResponse for Error {
     }
 }
 
-impl<E> From<E> for Error
+impl<E> From<E> for ServerError
 where
     E: Into<anyhow::Error>,
 {

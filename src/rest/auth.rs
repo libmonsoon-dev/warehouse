@@ -4,7 +4,7 @@ use crate::{
         AuthTokens,
         SignUpRequest
     },
-    rest::error::Error, state::AppState,
+    rest::error::ServerError, state::AppState,
 };
 use anyhow::Result;
 use axum::{Json, extract::State, http::StatusCode};
@@ -14,7 +14,7 @@ use validator::Validate;
 pub async fn sign_up(
     State(state): State<AppState>,
     Json(req): Json<SignUpRequest>,
-) -> Result<(StatusCode, Json<AuthTokens>), Error> {
+) -> Result<(StatusCode, Json<AuthTokens>), ServerError> {
     req.validate()?;
 
     let tokens = state
@@ -30,7 +30,7 @@ pub async fn sign_up(
 pub async fn sign_in(
     State(state): State<AppState>,
     Json(req): Json<SignInRequest>,
-) -> Result<(StatusCode, Json<AuthTokens>), Error> {
+) -> Result<(StatusCode, Json<AuthTokens>), ServerError> {
     req.validate()?;
 
     let tokens = state
