@@ -3,7 +3,7 @@ use crate::{
     contract::repository::user::UserRepository, contract::repository::Repository, db, domain,
     repository::postgresql::models::User, repository::postgresql::schema::users,
 };
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use diesel::{prelude::*, result::DatabaseErrorKind};
 use diesel_async::RunQueryDsl;
 use secrecy::{ExposeSecret, SecretString};
@@ -23,7 +23,7 @@ impl PostgresUserRepo {
 impl Repository<domain::User> for PostgresUserRepo {
     #[tracing::instrument(skip(self, user))]
     async fn create(&self, user: &mut domain::User) -> Result<()> {
-        let mut conn = self.pool.get().await.context("DB connection failure")?;
+        let mut conn = self.pool.get().await?;
 
         let model = User {
             id: user.id,
@@ -61,7 +61,7 @@ impl Repository<domain::User> for PostgresUserRepo {
 
     #[tracing::instrument(skip(self))]
     async fn get_by_id(&self, id: Uuid) -> Result<domain::User> {
-        let mut conn = self.pool.get().await.context("DB connection failure")?;
+        let mut conn = self.pool.get().await?;
 
         let model = users::table
             .find(id)
@@ -81,7 +81,7 @@ impl Repository<domain::User> for PostgresUserRepo {
 impl UserRepository for PostgresUserRepo {
     #[tracing::instrument(skip(self))]
     async fn get_by_email(&self, email: &str) -> Result<domain::User> {
-        let mut conn = self.pool.get().await.context("DB connection failure")?;
+        let mut conn = self.pool.get().await?;
 
         let model = users::table
             .select(User::as_select())

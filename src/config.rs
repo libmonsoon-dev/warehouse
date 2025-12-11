@@ -1,4 +1,4 @@
-use anyhow::{Error, Context, anyhow};
+use anyhow::{Context, Error, anyhow};
 use config::Environment;
 use dotenvy::dotenv;
 use secrecy::{ExposeSecret, SecretString};
@@ -58,7 +58,7 @@ impl TryFrom<&str> for DatabaseConfig {
                 .into(),
             port: url.port().unwrap_or(5432),
             host: url.host().ok_or(anyhow!("missing host"))?.to_string(),
-            database: path[1..path.len() - 1].to_owned(),
+            database: path[1..path.len()].to_owned(),
         })
     }
 }
