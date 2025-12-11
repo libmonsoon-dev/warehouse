@@ -7,6 +7,7 @@ use leptos::tachys::renderer::CastFrom;
 use leptos::tachys::renderer::Rndr;
 use leptos::tachys::view::{Position, PositionState};
 use validator::ValidationErrors;
+use crate::web::error::ServerError;
 
 no_attrs!(WebError);
 
@@ -20,10 +21,10 @@ impl From<ValidationErrors> for WebError {
     }
 }
 
-impl From<ServerFnError> for WebError {
-    fn from(value: ServerFnError) -> Self {
+impl From<ServerError> for WebError {
+    fn from(value: ServerError) -> Self {
         //TODO: error message
-        Self(format!("{}", value))
+        Self(value.to_string())
     }
 }
 
