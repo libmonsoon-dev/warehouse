@@ -5,6 +5,7 @@ use uuid::Uuid;
 use validator::Validate;
 
 #[derive(Serialize, Deserialize, Validate, Clone, Debug)]
+#[cfg_attr(feature = "ssr", derive(utoipa::ToSchema))]
 pub struct SignInRequest {
     #[validate(email, length(min = 3, max = 256))]
     pub email: String,
@@ -25,6 +26,7 @@ impl Into<SignInData> for SignInRequest {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, Validate)]
+#[cfg_attr(feature = "ssr", derive(utoipa::ToSchema))]
 pub struct SignUpRequest {
     #[validate(length(min = 3, max = 256))]
     pub first_name: String,
@@ -66,6 +68,7 @@ pub struct AccessTokenClaims {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "ssr", derive(utoipa::ToSchema))]
 pub struct AuthTokens {
     pub access_token: String,
     //TODO: refresh_token
