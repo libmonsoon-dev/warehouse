@@ -1,7 +1,7 @@
 mod auth;
-mod user;
 mod error;
+mod user;
 
 pub use auth::*;
-pub use user::*;
 pub use error::*;
+pub use user::*;

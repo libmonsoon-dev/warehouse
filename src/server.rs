@@ -1,10 +1,10 @@
 use crate::apidoc::ApiDoc;
 use crate::state::AppState;
-use crate::web::app::{shell, App};
+use crate::web::app::{App, shell};
 use crate::{dependency::AppContainer, rest};
 use http::StatusCode;
 use leptos::prelude::*;
-use leptos_axum::{file_and_error_handler_with_context, generate_route_list, LeptosRoutes};
+use leptos_axum::{LeptosRoutes, file_and_error_handler_with_context, generate_route_list};
 use std::time::Duration;
 use tokio::{net::TcpListener, signal};
 use tower_http::timeout::TimeoutLayer;

@@ -1,4 +1,6 @@
 #[cfg(feature = "ssr")]
+pub mod apidoc;
+#[cfg(feature = "ssr")]
 pub mod config;
 pub mod contract;
 #[cfg(feature = "ssr")]
@@ -19,5 +21,3 @@ pub mod service;
 pub mod state;
 pub mod telemetry;
 pub mod web;
-#[cfg(feature = "ssr")]
-pub mod apidoc;

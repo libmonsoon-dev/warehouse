@@ -1,6 +1,6 @@
 use crate::contract::error::ErrorCode;
 use crate::dto::AppError;
-use anyhow::{anyhow, Error};
+use anyhow::{Error, anyhow};
 use bytes::Bytes;
 use leptos::prelude::*;
 use leptos::server_fn::{ContentType, Decodes, Encodes, Format, FormatType};

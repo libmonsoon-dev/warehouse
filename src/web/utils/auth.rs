@@ -1,7 +1,7 @@
-use leptos::prelude::*;
-use leptos::prelude::codee::string::JsonSerdeCodec;
-use leptos_use::storage::{use_local_storage, use_local_storage_with_options, UseStorageOptions};
 use crate::dto::AuthTokens;
+use leptos::prelude::codee::string::JsonSerdeCodec;
+use leptos::prelude::*;
+use leptos_use::storage::{UseStorageOptions, use_local_storage, use_local_storage_with_options};
 
 #[cfg(feature = "ssr")]
 pub fn expect_access_token() -> jsonwebtoken::TokenData<crate::dto::AccessTokenClaims> {

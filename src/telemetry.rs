@@ -28,9 +28,7 @@ pub fn get_subscriber() -> impl Subscriber {
     use tracing_subscriber_wasm::MakeConsoleWriter;
 
     tracing_subscriber::fmt()
-        .with_writer(
-            MakeConsoleWriter::default(),
-        )
+        .with_writer(MakeConsoleWriter::default())
         .with_ansi(false)
         // For some reason, if we don't do this in the browser, we get
         // a runtime error.

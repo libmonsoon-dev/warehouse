@@ -12,7 +12,7 @@ mod utils;
 pub fn hydrate() {
     use crate::{
         telemetry::{get_subscriber, init_subscriber},
-        web::app::App
+        web::app::App,
     };
 
     console_error_panic_hook::set_once();
