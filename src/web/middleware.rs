@@ -45,7 +45,7 @@ impl Service<Request<Body>> for AuthorizationService {
 
         Box::pin(async move {
             let response = expect_response_options();
-            println!("Response: {response:?}");
+
             match provide_access_token().await {
                 Ok(_) => {}
                 Err(err) => {
