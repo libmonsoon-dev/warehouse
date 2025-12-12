@@ -28,9 +28,9 @@ impl From<ServerError> for WebError {
     }
 }
 
-impl Into<Error> for WebError {
-    fn into(self) -> Error {
-        Error::from(self.0)
+impl From<WebError> for Error {
+    fn from(val: WebError) -> Self {
+        Error::from(val.0)
     }
 }
 

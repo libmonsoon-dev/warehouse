@@ -14,9 +14,9 @@ pub struct SignInRequest {
     pub password: String,
 }
 
-impl Into<SignInData> for SignInRequest {
-    fn into(self) -> SignInData {
-        let Self { email, password } = self;
+impl From<SignInRequest> for SignInData {
+    fn from(val: SignInRequest) -> Self {
+        let SignInRequest { email, password } = val;
 
         SignInData {
             email,
@@ -41,14 +41,14 @@ pub struct SignUpRequest {
     pub password: String,
 }
 
-impl Into<SignUpData> for SignUpRequest {
-    fn into(self) -> SignUpData {
-        let Self {
+impl From<SignUpRequest> for SignUpData {
+    fn from(val: SignUpRequest) -> Self {
+        let SignUpRequest {
             first_name,
             last_name,
             email,
             password,
-        } = self;
+        } = val;
 
         SignUpData {
             first_name,

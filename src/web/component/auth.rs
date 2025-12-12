@@ -7,7 +7,7 @@ pub fn Authorized(children: Children) -> impl IntoView {
     let navigate = leptos_router::hooks::use_navigate();
 
     Effect::new(move |_| {
-        if let None = tokens.get() {
+        if tokens.get().is_none() {
             navigate("/sign-in", Default::default());
         }
     });

@@ -8,7 +8,7 @@ use tracing_log::log;
 #[component]
 pub fn HomePage() -> impl IntoView {
     //TODO: remove this
-    let decode_jwt_resource = LocalResource::new(move || decode_jwt());
+    let decode_jwt_resource = LocalResource::new(decode_jwt);
 
     Effect::new(move |_| {
         log::info!("auth token {:?}", decode_jwt_resource.get());

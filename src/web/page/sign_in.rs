@@ -12,7 +12,7 @@ pub fn SignIn() -> impl IntoView {
     let navigate = leptos_router::hooks::use_navigate();
 
     Effect::new(move |_| {
-        if let Some(_) = tokens.get() {
+        if tokens.get().is_some() {
             navigate("/", Default::default());
         }
     });

@@ -15,7 +15,7 @@ pub enum ErrorCode {
 impl From<Chain<'_>> for ErrorCode {
     fn from(chain: Chain) -> Self {
         for cause in chain {
-            if let Some(_) = cause.downcast_ref::<ValidationError>() {
+            if cause.downcast_ref::<ValidationError>().is_some() {
                 return ErrorCode::ValidationFailed;
             }
 
