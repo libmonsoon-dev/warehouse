@@ -1,4 +1,4 @@
-use crate::web::error::ServerError;
+use crate::dto::AppError;
 use leptos::attr::any_attribute::AnyAttribute;
 use leptos::prelude::*;
 use leptos::tachys;
@@ -21,9 +21,9 @@ impl From<ValidationErrors> for WebError {
     }
 }
 
-impl From<ServerError> for WebError {
-    fn from(value: ServerError) -> Self {
-        Self(value.0.message)
+impl From<AppError> for WebError {
+    fn from(value: AppError) -> Self {
+        Self(value.message)
     }
 }
 

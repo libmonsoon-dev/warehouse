@@ -1,7 +1,6 @@
-use crate::dto::AccessTokenClaims;
+use crate::dto::{AccessTokenClaims, AppError};
 use crate::web::client::CustomClient;
 use crate::web::component::Authorized;
-use crate::web::error::ServerError;
 use leptos::prelude::*;
 use tracing_log::log;
 
@@ -24,7 +23,7 @@ pub fn HomePage() -> impl IntoView {
 #[tracing::instrument]
 #[server(client=CustomClient)]
 #[middleware(crate::web::middleware::AuthorizationLayer)]
-async fn decode_jwt() -> Result<AccessTokenClaims, ServerError> {
+async fn decode_jwt() -> Result<AccessTokenClaims, AppError> {
     use crate::web::utils::expect_access_token;
 
     Ok(expect_access_token().claims)

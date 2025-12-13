@@ -1,6 +1,5 @@
-use crate::dto::{AuthTokens, SignUpRequest};
+use crate::dto::{AppError, AuthTokens, SignUpRequest};
 use crate::web::component::{ErrorToast, Toast, WebError};
-use crate::web::error::ServerError;
 use crate::web::utils::use_auth_tokens;
 use leptos::prelude::*;
 use leptos_router::components::A;
@@ -81,7 +80,7 @@ pub fn SignUp() -> impl IntoView {
 
 #[tracing::instrument(skip(req))]
 #[server]
-async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, ServerError> {
+async fn sign_up(req: SignUpRequest) -> Result<AuthTokens, AppError> {
     req.validate()?;
 
     let tokens = crate::web::utils::expect_app_state()
