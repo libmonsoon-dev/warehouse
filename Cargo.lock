@@ -4474,7 +4474,6 @@ dependencies = [
  "argon2",
  "async-trait",
  "axum",
- "bytes",
  "chrono",
  "claims",
  "config",

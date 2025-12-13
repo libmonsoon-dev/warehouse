@@ -1,76 +1,31 @@
-use crate::contract::error::ErrorCode;
 use crate::dto::AppError;
-use anyhow::{Error, anyhow};
-use bytes::Bytes;
 use leptos::prelude::*;
-use leptos::server_fn::{ContentType, Decodes, Encodes, Format, FormatType};
-use std::fmt::{Debug, Display, Formatter};
-use std::string::FromUtf8Error;
-use tracing_log::log;
+use leptos::server_fn::codec::JsonEncoding;
+use serde::{Deserialize, Serialize};
+use std::fmt::Debug;
 
-pub struct ServerError(Error);
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ServerError(pub AppError);
 
+#[cfg(feature = "ssr")]
 impl<T> From<T> for ServerError
 where
-    T: Into<Error>,
+    T: Into<anyhow::Error> + Debug,
 {
     fn from(err: T) -> Self {
-        ServerError(err.into())
-    }
-}
+        tracing_log::log::error!("{:?}", err);
 
-impl Debug for ServerError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Debug::fmt(&self.0, f)
-    }
-}
+        let err_code = crate::contract::error::ErrorCode::from(err.into().chain());
+        crate::web::utils::expect_response_options().set_status(err_code.status_code());
 
-impl Display for ServerError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Display::fmt(&self.0, f)
-    }
-}
-
-impl Clone for ServerError {
-    fn clone(&self) -> Self {
-        Self(anyhow!(self.0.to_string()))
+        Self(AppError::from(err_code))
     }
 }
 
 impl FromServerFnError for ServerError {
-    type Encoder = ServerErrorEncoder;
+    type Encoder = JsonEncoding;
 
     fn from_server_fn_error(value: ServerFnErrorErr) -> Self {
-        Self(value.into())
-    }
-}
-
-pub struct ServerErrorEncoder;
-
-impl ContentType for ServerErrorEncoder {
-    const CONTENT_TYPE: &'static str = "text/plain";
-}
-
-impl FormatType for ServerErrorEncoder {
-    const FORMAT_TYPE: Format = Format::Text;
-}
-
-impl Encodes<ServerError> for ServerErrorEncoder {
-    type Error = std::fmt::Error;
-
-    fn encode(output: &ServerError) -> Result<Bytes, Self::Error> {
-        log::error!("{:?}", output.0);
-
-        Ok(Bytes::from(
-            AppError::from(ErrorCode::from(output.0.chain())).message,
-        ))
-    }
-}
-
-impl Decodes<ServerError> for ServerErrorEncoder {
-    type Error = FromUtf8Error;
-
-    fn decode(bytes: Bytes) -> Result<ServerError, Self::Error> {
-        Ok(ServerError(anyhow!(String::from_utf8(bytes.to_vec())?)))
+        unimplemented!("from_server_fn_error({value})")
     }
 }

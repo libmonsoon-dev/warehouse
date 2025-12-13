@@ -1,6 +1,6 @@
 use crate::contract::error::ErrorCode;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq, Clone)]
 pub struct AppError {
     pub code: ErrorCode,
     pub message: String,

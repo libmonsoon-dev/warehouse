@@ -23,8 +23,7 @@ impl From<ValidationErrors> for WebError {
 
 impl From<ServerError> for WebError {
     fn from(value: ServerError) -> Self {
-        //TODO: error message
-        Self(value.to_string())
+        Self(value.0.message)
     }
 }
 

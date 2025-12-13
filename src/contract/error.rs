@@ -3,7 +3,7 @@ use anyhow::Chain;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use validator::{ValidationError, ValidationErrors};
 
-#[derive(Serialize_repr, Deserialize_repr, Debug, PartialEq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, PartialEq, Clone)]
 #[repr(u8)]
 pub enum ErrorCode {
     Ok = 0,
