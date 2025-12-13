@@ -44,15 +44,10 @@ impl Service<Request<Body>> for AuthorizationService {
         let future = self.inner.call(req);
 
         Box::pin(async move {
-            let response = expect_response_options();
-
-            match provide_access_token().await {
-                Ok(_) => {}
-                Err(err) => {
-                    tracing::error!("authorization middleware: {:?}", err);
-                    response.set_status(StatusCode::UNAUTHORIZED);
-                    return Err(ServerFnError::MiddlewareError("Unauthorized".to_owned()));
-                }
+            if let Err(err) = provide_access_token().await {
+                tracing::error!("authorization middleware: {:?}", err);
+                expect_response_options().set_status(StatusCode::UNAUTHORIZED);
+                return Err(ServerFnError::MiddlewareError("Unauthorized".to_owned()));
             };
 
             future.await
