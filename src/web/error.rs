@@ -3,6 +3,7 @@ use leptos::prelude::*;
 use leptos::server_fn::codec::JsonEncoding;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
+use crate::contract::error::ErrorCode;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ServerError(pub AppError);
@@ -26,6 +27,6 @@ impl FromServerFnError for ServerError {
     type Encoder = JsonEncoding;
 
     fn from_server_fn_error(value: ServerFnErrorErr) -> Self {
-        unimplemented!("from_server_fn_error({value})")
+        Self(AppError{ code: ErrorCode::UnexpectedError, message: value.to_string() })
     }
 }
