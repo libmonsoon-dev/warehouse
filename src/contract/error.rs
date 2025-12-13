@@ -1,8 +1,10 @@
 use crate::domain::{AuthError, RepositoryError};
 use anyhow::Chain;
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use validator::{ValidationError, ValidationErrors};
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, PartialEq)]
+#[repr(u8)]
 pub enum ErrorCode {
     Ok = 0,
     UnexpectedError = 1,
