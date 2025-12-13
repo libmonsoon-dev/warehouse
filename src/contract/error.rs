@@ -1,6 +1,6 @@
 use crate::domain::{AuthError, RepositoryError};
 use anyhow::Chain;
-use validator::ValidationError;
+use validator::{ValidationError, ValidationErrors};
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq)]
 pub enum ErrorCode {
@@ -15,7 +15,9 @@ pub enum ErrorCode {
 impl From<Chain<'_>> for ErrorCode {
     fn from(chain: Chain) -> Self {
         for cause in chain {
-            if cause.downcast_ref::<ValidationError>().is_some() {
+            if cause.downcast_ref::<ValidationError>().is_some()
+                || cause.downcast_ref::<ValidationErrors>().is_some()
+            {
                 return ErrorCode::ValidationFailed;
             }
 
