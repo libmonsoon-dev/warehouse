@@ -2,8 +2,8 @@ SHELL=/bin/bash -o pipefail
 
 dev:
 	cargo watch \
-		--exec "check --features=ssr" \
 		--exec "check --features=hydrate" \
+		--exec "check --features=ssr" \
 		--exec "test --features=ssr" \
 		--clear
 
