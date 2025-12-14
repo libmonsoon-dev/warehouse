@@ -4,12 +4,11 @@ CREATE TYPE resource_type AS ENUM ('user', 'role', 'user_role', 'rule', 'role_ru
 
 CREATE TYPE rule_effect AS ENUM ('allow', 'deny');
 
-CREATE TABLE "rules"
+CREATE TABLE "roles"
 (
-    "id"            UUID            NOT NULL PRIMARY KEY,
-    "action"        resource_action NOT NULL,
-    "resource_type" resource_type   NOT NULL,
-    "effect"        rule_effect     NOT NULL
+    "id"          UUID                NOT NULL PRIMARY KEY,
+    "name"        VARCHAR(100) UNIQUE NOT NULL,
+    "description" TEXT
 );
 
 CREATE TABLE "user_roles"
@@ -20,11 +19,12 @@ CREATE TABLE "user_roles"
     PRIMARY KEY ("user_id", "role_id")
 );
 
-CREATE TABLE "roles"
+CREATE TABLE "rules"
 (
-    "id"          UUID                NOT NULL PRIMARY KEY,
-    "name"        VARCHAR(100) UNIQUE NOT NULL,
-    "description" TEXT
+    "id"            UUID            NOT NULL PRIMARY KEY,
+    "action"        resource_action NOT NULL,
+    "resource_type" resource_type   NOT NULL,
+    "effect"        rule_effect     NOT NULL
 );
 
 CREATE TABLE "role_rules"
