@@ -11,6 +11,7 @@ crate-type = ["cdylib", "rlib"]
 argon2 = { version = "0.5.3", features = ["std"], optional = true }
 diesel = { version = "2.3.3", features = ["uuid"], optional = true }
 diesel-async = { version = "0.7.3", features = ["postgres", "deadpool"], optional = true }
+diesel-derive-enum = { version = "3.0.0-beta.1", features = ["postgres"], optional = true }
 deadpool = { version = "0.12.3", optional = true }
 uuid = { version = "1.18.1", features = ["v4", "serde"] }
 tokio = { version = "1.48.0", features = ["rt-multi-thread", "signal"], optional = true }
@@ -73,6 +74,7 @@ ssr = [
  "dep:argon2",
  "dep:diesel",
  "dep:diesel-async",
+ "dep:diesel-derive-enum",
  "dep:deadpool",
  "dep:axum",
  "dep:tokio",

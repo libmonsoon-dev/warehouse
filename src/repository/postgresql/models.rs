@@ -1,6 +1,34 @@
 use crate::domain;
 use diesel::{Insertable, Queryable, Selectable};
+use diesel_derive_enum::DbEnum;
 use uuid::Uuid;
+
+#[derive(DbEnum, Debug)]
+#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::ResourceAction")]
+pub enum ResourceAction {
+    Create,
+    Read,
+    List,
+    Update,
+    Delete,
+}
+
+#[derive(DbEnum, Debug)]
+#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::ResourceType")]
+pub enum ResourceType {
+    User,
+    Role,
+    UserRole,
+    Rule,
+    RoleRule,
+}
+
+#[derive(DbEnum, Debug)]
+#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::RuleEffect")]
+pub enum RuleEffect {
+    Allow,
+    Deny,
+}
 
 #[derive(Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::repository::postgresql::schema::users)]
