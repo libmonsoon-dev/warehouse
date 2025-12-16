@@ -1,6 +1,6 @@
 use crate::dto::AppError;
-use axum::response::{IntoResponse, Response};
 use axum::Json;
+use axum::response::{IntoResponse, Response};
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
