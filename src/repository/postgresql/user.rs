@@ -1,23 +1,24 @@
-use crate::contract::repository::Repository;
-use crate::contract::repository::user::UserRepository;
+use crate::contract::repository::{
+    BridgeRepository, Repository, UserRepository, UserRoleRepository,
+};
 use crate::db;
 use crate::domain;
-use crate::domain::RepositoryError;
+use crate::repository::postgresql::map_diesel_error;
 use crate::repository::postgresql::models::User;
-use crate::repository::postgresql::schema::users;
-use anyhow::{Context, Result, anyhow};
-use diesel::{prelude::*, result::DatabaseErrorKind};
+use crate::repository::postgresql::schema::{user_roles, users};
+use anyhow::{Context, Result};
+use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
-use secrecy::{ExposeSecret, SecretString};
+use secrecy::SecretString;
 use uuid::Uuid;
 
-pub struct PostgresUserRepo {
+pub struct PostgresUserRepository {
     pool: db::Pool,
 }
 
-impl PostgresUserRepo {
+impl PostgresUserRepository {
     pub fn new(pool: db::Pool) -> Self {
-        PostgresUserRepo { pool }
+        Self { pool }
     }
 
     async fn get_connection(&self) -> Result<db::Connection> {
@@ -26,80 +27,41 @@ impl PostgresUserRepo {
 }
 
 #[async_trait::async_trait]
-impl Repository<domain::User> for PostgresUserRepo {
+impl Repository<domain::User> for PostgresUserRepository {
     #[tracing::instrument(skip(self, user))]
-    async fn create(&self, user: &mut domain::User) -> Result<()> {
-        let mut conn = self.get_connection().await?;
-
-        let model = User {
-            id: user.id,
-            first_name: user.first_name.clone(),
-            last_name: user.last_name.clone(),
-            email: user.email.clone(),
-            password_hash: user.password_hash.expose_secret().into(),
-        };
-
-        let insert_result = diesel::insert_into(users::table)
-            .values(model)
+    async fn create(&self, user: domain::User) -> Result<domain::User> {
+        diesel::insert_into(users::table)
+            .values(User::from(user))
             .returning(User::as_returning())
-            .get_result(&mut conn)
-            .await;
-
-        match insert_result {
-            Err(diesel::result::Error::DatabaseError(kind, info)) => match &kind {
-                DatabaseErrorKind::UniqueViolation => {
-                    Err(RepositoryError::Exists(anyhow!(info.message().to_string())).into())
-                }
-                _ => Err(anyhow!(info.message().to_string())),
-            },
-            Err(err) => Err(err.into()),
-            Ok(model) => {
-                user.id = model.id;
-                user.first_name = user.first_name.clone();
-                user.last_name = user.last_name.clone();
-                user.email = user.email.clone();
-                user.password_hash = user.password_hash.clone();
-
-                Ok(())
-            }
-        }
+            .get_result(&mut self.get_connection().await?)
+            .await
+            .map(domain::User::from)
+            .map_err(map_diesel_error)
     }
 
     #[tracing::instrument(skip(self))]
     async fn get_by_id(&self, id: Uuid) -> Result<domain::User> {
-        let mut conn = self.get_connection().await?;
-
-        let model = users::table
+        users::table
             .find(id)
             .select(User::as_select())
-            .first(&mut conn)
+            .first(&mut self.get_connection().await?)
             .await
-            .optional()?;
-
-        match model {
-            Some(model) => Ok(model.into()),
-            None => Err(RepositoryError::NotFound.into()),
-        }
+            .map(domain::User::from)
+            .map_err(map_diesel_error)
     }
 }
 
 #[async_trait::async_trait]
-impl UserRepository for PostgresUserRepo {
+impl UserRepository for PostgresUserRepository {
     #[tracing::instrument(skip(self))]
     async fn get_by_email(&self, email: &str) -> Result<domain::User> {
-        let mut conn = self.get_connection().await?;
-
-        let model = users::table
+        users::table
             .select(User::as_select())
             .filter(users::email.eq(email))
-            .first(&mut conn)
+            .first(&mut self.get_connection().await?)
             .await
-            .optional()?;
-
-        match model {
-            Some(model) => Ok(model.into()),
-            None => Err(RepositoryError::NotFound.into()),
-        }
+            .map(domain::User::from)
+            .map_err(map_diesel_error)
     }
 
     #[tracing::instrument(skip(self, _password_hash))]
@@ -111,3 +73,33 @@ impl UserRepository for PostgresUserRepo {
         todo!()
     }
 }
+
+pub struct PostgresUserRoleRepository {
+    pool: db::Pool,
+}
+
+impl PostgresUserRoleRepository {
+    pub fn new(pool: db::Pool) -> Self {
+        Self { pool }
+    }
+
+    async fn get_connection(&self) -> Result<db::Connection> {
+        self.pool.get().await.context("get connection")
+    }
+}
+
+#[async_trait::async_trait]
+impl BridgeRepository<domain::UserRole> for PostgresUserRoleRepository {
+    #[tracing::instrument(skip(self, val))]
+    async fn create(&self, val: domain::UserRole) -> Result<domain::UserRole> {
+        diesel::insert_into(user_roles::table)
+            .values(val)
+            .returning(domain::UserRole::as_returning())
+            .get_result(&mut self.get_connection().await?)
+            .await
+            .map_err(map_diesel_error)
+    }
+}
+
+#[async_trait::async_trait]
+impl UserRoleRepository for PostgresUserRoleRepository {}

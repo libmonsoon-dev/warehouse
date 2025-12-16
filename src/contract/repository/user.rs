@@ -1,4 +1,4 @@
-use crate::contract::repository::Repository;
+use crate::contract::repository::{BridgeRepository, Repository};
 use crate::domain;
 use anyhow::Result;
 use secrecy::SecretString;
@@ -10,3 +10,6 @@ pub trait UserRepository: Repository<domain::User> {
     async fn update_password_hash(&self, user_id: Uuid, password_hash: &SecretString)
     -> Result<()>;
 }
+
+#[async_trait::async_trait]
+pub trait UserRoleRepository: BridgeRepository<domain::UserRole> {}

@@ -1,34 +1,7 @@
 use crate::domain;
 use diesel::{Insertable, Queryable, Selectable};
-use diesel_derive_enum::DbEnum;
+use secrecy::ExposeSecret;
 use uuid::Uuid;
-
-#[derive(DbEnum, Debug)]
-#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::ResourceAction")]
-pub enum ResourceAction {
-    Create,
-    Read,
-    List,
-    Update,
-    Delete,
-}
-
-#[derive(DbEnum, Debug)]
-#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::ResourceType")]
-pub enum ResourceType {
-    User,
-    Role,
-    UserRole,
-    Rule,
-    RoleRule,
-}
-
-#[derive(DbEnum, Debug)]
-#[db_enum(existing_type_path = "crate::repository::postgresql::schema::sql_types::RuleEffect")]
-pub enum RuleEffect {
-    Allow,
-    Deny,
-}
 
 #[derive(Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::repository::postgresql::schema::users)]
@@ -57,6 +30,26 @@ impl From<User> for domain::User {
             last_name,
             email,
             password_hash: password_hash.into(),
+        }
+    }
+}
+
+impl From<domain::User> for User {
+    fn from(user: domain::User) -> Self {
+        let domain::User {
+            id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+        } = user;
+
+        Self {
+            id,
+            first_name,
+            last_name,
+            email,
+            password_hash: password_hash.expose_secret().into(),
         }
     }
 }

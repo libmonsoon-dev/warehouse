@@ -15,8 +15,8 @@ async fn sign_in_works() {
 
     // Act
     let request = serde_json::json!({
-        "email": &app.admin.email,
-        "password": &app.admin.password.expose_secret(),
+        "email": &app.data.admin.email,
+        "password": &app.data.admin.password.expose_secret(),
     });
 
     let response = app
@@ -44,7 +44,7 @@ async fn sign_in_with_invalid_email_fails() {
     // Arrange
     let app = spawn_app().await;
     let email = fake::faker::internet::en::SafeEmail().fake::<String>();
-    let password = app.admin.password.expose_secret();
+    let password = app.data.admin.password.expose_secret();
 
     // Act
     let request = serde_json::json!({
@@ -72,7 +72,7 @@ async fn sign_in_with_invalid_email_fails() {
 async fn sign_in_with_invalid_password_fails() {
     // Arrange
     let app = spawn_app().await;
-    let email = app.admin.email.clone();
+    let email = app.data.admin.email.clone();
     let password = uuid::fmt::Simple::from_uuid(Uuid::new_v4()).to_string();
 
     // Act

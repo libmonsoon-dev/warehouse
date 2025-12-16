@@ -1,4 +1,4 @@
-use crate::contract::repository::user::UserRepository;
+use crate::contract::repository::UserRepository;
 use crate::domain::{AuthError, RepositoryError};
 use crate::domain::{SignInData, SignUpData, User};
 use crate::dto::{AccessTokenClaims, AuthTokens};
@@ -27,7 +27,7 @@ impl AuthService {
 
     #[tracing::instrument(skip(self, args))]
     pub async fn sign_up(&self, args: SignUpData) -> Result<AuthTokens> {
-        let mut user = User {
+        let user = User {
             id: Uuid::new_v4(),
             first_name: args.first_name,
             last_name: args.last_name,
@@ -39,8 +39,9 @@ impl AuthService {
             .context("Failed to hash password")?,
         };
 
-        self.user_repository
-            .create(&mut user)
+        let user = self
+            .user_repository
+            .create(user)
             .await
             .context("Failed to create user")?;
 
@@ -159,7 +160,7 @@ fn verify_password_hash(
         .map_err(AuthError::InvalidCredentials)
 }
 
-fn compute_password_hash(password: SecretString) -> Result<SecretString> {
+pub fn compute_password_hash(password: SecretString) -> Result<SecretString> {
     let salt = SaltString::generate(&mut OsRng);
     let password_hash = new_argon()
         .hash_password(password.expose_secret().as_bytes(), &salt)?

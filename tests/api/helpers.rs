@@ -1,4 +1,4 @@
-use anyhow::{Context, Error};
+use anyhow::{Context, Result};
 use diesel::Connection;
 use diesel::pg::PgConnection;
 use diesel::sql_query;
@@ -12,6 +12,8 @@ use std::sync::LazyLock;
 use tokio::net::TcpListener;
 use uuid::Uuid;
 use warehouse::config::{Config, DatabaseConfig};
+use warehouse::domain::{Role, RoleRule, Rule, User, UserRole};
+use warehouse::service::auth::compute_password_hash;
 use warehouse::{
     config::get_configuration,
     dependency::AppContainer,
@@ -33,8 +35,13 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
 
 pub struct TestApp<'a> {
     pub address: String,
-    pub admin: domain::SignUpData,
     pub dependency: AppContainer<'a>,
+    pub data: TestData,
+}
+
+pub struct TestData {
+    pub admin: domain::SignUpData,
+    pub admin_id: Uuid,
 }
 
 impl<'a> TestApp<'a> {
@@ -76,43 +83,34 @@ pub async fn spawn_app<'a>() -> TestApp<'a> {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let mut configuration = get_configuration().expect("Failed to read configuration");
-    setup_test_database(&mut configuration)
+    let configuration = get_configuration().expect("Failed to read configuration");
+    let (dependency, data) = setup_test_database(configuration)
         .await
         .expect("Failed to setup database");
-    let dependency = AppContainer::new(configuration);
-
-    let admin = domain::SignUpData {
-        first_name: "admin".to_string(),
-        last_name: "admin".to_string(),
-        email: "admin@warehouse.com".to_string(),
-        password: SecretString::from("admin-pass"),
-    };
 
     let leptos_options = LeptosOptions::builder().output_name("test").build();
-
-    dependency
-        .auth_service()
-        .await
-        .sign_up(admin.clone())
-        .await
-        .expect("Failed to create admin user");
 
     let server = server::run(leptos_options, dependency.clone(), listener);
     let _ = tokio::spawn(server);
     TestApp {
         address,
-        admin,
+        data,
         dependency,
     }
 }
 
-async fn setup_test_database(config: &mut Config) -> Result<(), Error> {
+async fn setup_test_database<'a>(mut config: Config) -> Result<(AppContainer<'a>, TestData)> {
     config.database.database = format!("test_{}", Uuid::new_v4().to_string());
-    configure_database(&config.database).await
+    configure_database(&config.database).await?;
+
+    let dependencies = AppContainer::new(config);
+
+    let data = populate_database(&dependencies).await?;
+
+    Ok((dependencies, data))
 }
 
-async fn configure_database(conf: &DatabaseConfig) -> Result<(), Error> {
+async fn configure_database(conf: &DatabaseConfig) -> Result<()> {
     // Create database
     let maintenance_config = DatabaseConfig {
         database: "postgres".to_string(),
@@ -144,4 +142,105 @@ fn run_migration(conn: &mut impl MigrationHarness<diesel::pg::Pg>) {
 
     conn.run_pending_migrations(MIGRATIONS)
         .expect("Failed to run pending migrations.");
+}
+
+async fn populate_database<'a>(dependencies: &AppContainer<'a>) -> Result<TestData> {
+    let admin_sign_up_data = domain::SignUpData {
+        first_name: "admin".to_string(),
+        last_name: "admin".to_string(),
+        email: "admin@warehouse.com".to_string(),
+        password: SecretString::from("admin-pass"),
+    };
+
+    let admin = User {
+        id: Uuid::new_v4(),
+        first_name: admin_sign_up_data.first_name.clone(),
+        last_name: admin_sign_up_data.last_name.clone(),
+        email: admin_sign_up_data.email.clone(),
+        password_hash: compute_password_hash(admin_sign_up_data.password.clone())
+            .context("Failed to hash password")?,
+    };
+
+    let admin = dependencies
+        .user_repository()
+        .await
+        .create(admin)
+        .await
+        .context("Failed to create user")?;
+
+    let allow_create_role = Rule {
+        id: Uuid::new_v4(),
+        action: domain::ResourceAction::Create,
+        resource_type: domain::ResourceType::Role,
+        effect: domain::RuleEffect::Allow,
+    };
+
+    let allow_create_user_role = Rule {
+        id: Uuid::new_v4(),
+        action: domain::ResourceAction::Create,
+        resource_type: domain::ResourceType::UserRole,
+        effect: domain::RuleEffect::Allow,
+    };
+
+    let allow_create_rule = Rule {
+        id: Uuid::new_v4(),
+        action: domain::ResourceAction::Create,
+        resource_type: domain::ResourceType::Rule,
+        effect: domain::RuleEffect::Allow,
+    };
+
+    let allow_create_role_rule = Rule {
+        id: Uuid::new_v4(),
+        action: domain::ResourceAction::Create,
+        resource_type: domain::ResourceType::RoleRule,
+        effect: domain::RuleEffect::Allow,
+    };
+
+    let root_rules = vec![
+        allow_create_role,
+        allow_create_user_role,
+        allow_create_rule,
+        allow_create_role_rule,
+    ];
+
+    for rule in root_rules.iter().cloned() {
+        dependencies.rule_repository().await.create(rule).await?;
+    }
+
+    let root_role = dependencies
+        .role_repository()
+        .await
+        .create(Role {
+            id: Uuid::new_v4(),
+            name: "root".to_string(),
+            description: None,
+        })
+        .await?;
+
+    for rule in root_rules {
+        dependencies
+            .role_rule_repository()
+            .await
+            .create(RoleRule {
+                role_id: root_role.id,
+                rule_id: rule.id,
+                assigned_by: None,
+            })
+            .await?;
+    }
+
+    dependencies
+        .user_role_repository()
+        .await
+        .create(UserRole {
+            user_id: admin.id,
+            role_id: root_role.id,
+            assigned_by: None,
+        })
+        .await?;
+
+    Ok(TestData {
+        admin: admin_sign_up_data,
+        admin_id: admin.id,
+    })
 }

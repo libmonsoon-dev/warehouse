@@ -1,7 +1,13 @@
-use crate::{
-    config::Config, contract::repository::user::UserRepository, db,
-    repository::postgresql::user::PostgresUserRepo, service::auth::AuthService,
+use crate::config::Config;
+use crate::contract::repository::{
+    RoleRepository, RoleRuleRepository, RuleRepository, UserRepository, UserRoleRepository,
 };
+use crate::db;
+use crate::repository::postgresql::{
+    PostgresRoleRepository, PostgresRoleRuleRepository, PostgresRuleRepository,
+    PostgresUserRepository, PostgresUserRoleRepository,
+};
+use crate::service::auth::AuthService;
 use despatma::dependency_container;
 
 #[dependency_container(pub)]
@@ -14,7 +20,23 @@ impl AppContainer {
     }
 
     async fn user_repository(&self, db_pool: &db::Pool) -> Box<dyn UserRepository> {
-        Box::new(PostgresUserRepo::new(db_pool.clone()))
+        Box::new(PostgresUserRepository::new(db_pool.clone()))
+    }
+
+    async fn user_role_repository(&self, db_pool: &db::Pool) -> Box<dyn UserRoleRepository> {
+        Box::new(PostgresUserRoleRepository::new(db_pool.clone()))
+    }
+
+    async fn role_repository(&self, db_pool: &db::Pool) -> Box<dyn RoleRepository> {
+        Box::new(PostgresRoleRepository::new(db_pool.clone()))
+    }
+
+    async fn role_rule_repository(&self, db_pool: &db::Pool) -> Box<dyn RoleRuleRepository> {
+        Box::new(PostgresRoleRuleRepository::new(db_pool.clone()))
+    }
+
+    async fn rule_repository(&self, db_pool: &db::Pool) -> Box<dyn RuleRepository> {
+        Box::new(PostgresRuleRepository::new(db_pool.clone()))
     }
 
     async fn auth_service(
