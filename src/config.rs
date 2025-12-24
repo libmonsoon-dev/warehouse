@@ -1,4 +1,4 @@
-use anyhow::{Context, Error, anyhow};
+use anyhow::{Context, Error, anyhow, bail};
 use config::Environment;
 use dotenvy::dotenv;
 use secrecy::{ExposeSecret, SecretString};
@@ -46,7 +46,7 @@ impl TryFrom<&str> for DatabaseConfig {
 
         let path = url.path();
         if path.len() < 2 {
-            return Err(anyhow!("missing database"));
+            bail!("missing database");
         }
 
         Ok(Self {

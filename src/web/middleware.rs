@@ -1,6 +1,6 @@
 use crate::contract::http::{AUTHORIZATION_HEADER, AUTHORIZATION_SCHEME};
 use crate::web::utils::{expect_app_state, expect_response_options};
-use anyhow::{Context, Error, anyhow};
+use anyhow::{Context, Error, bail};
 use axum::body::Body;
 use http::Request;
 use http::StatusCode;
@@ -59,19 +59,15 @@ async fn provide_access_token() -> Result<(), Error> {
     let headers: HeaderMap = extract().await?;
     let header = headers.get(AUTHORIZATION_HEADER);
     let Some(header) = header else {
-        return Err(anyhow!("Missing {AUTHORIZATION_HEADER} header"));
+        bail!("Missing {AUTHORIZATION_HEADER} header");
     };
 
     let Ok(header) = header.to_str() else {
-        return Err(anyhow!(
-            "{AUTHORIZATION_HEADER} header must contain visible ASCII chars"
-        ));
+        bail!("{AUTHORIZATION_HEADER} header must contain visible ASCII chars");
     };
 
     let Some(token) = header.strip_prefix(&format!("{AUTHORIZATION_SCHEME} ")) else {
-        return Err(anyhow!(
-            "{AUTHORIZATION_HEADER} contains an unsupported authorization scheme"
-        ));
+        bail!("{AUTHORIZATION_HEADER} contains an unsupported authorization scheme");
     };
 
     let token = expect_app_state()
