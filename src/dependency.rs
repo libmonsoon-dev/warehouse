@@ -39,6 +39,7 @@ impl AppContainer {
         Box::new(PostgresRuleRepository::new(db_pool.clone()))
     }
 
+    #[Singleton]
     async fn auth_service(
         &self,
         config: &Config,
